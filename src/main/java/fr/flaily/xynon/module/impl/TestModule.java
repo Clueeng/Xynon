@@ -6,11 +6,10 @@ import fr.flaily.xynon.events.ScreenEvent;
 import fr.flaily.xynon.events.player.MotionEvent;
 import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
-import fr.flaily.xynon.module.settings.impl.BooleanSetting;
-import fr.flaily.xynon.module.settings.impl.ColorSetting;
-import fr.flaily.xynon.module.settings.impl.ModeSetting;
-import fr.flaily.xynon.module.settings.impl.NumberSetting;
+import fr.flaily.xynon.module.settings.impl.*;
 import org.lwjgl.input.Keyboard;
+
+import java.util.Arrays;
 
 @FeatureInfo(name = "Test", category = Module.Category.Combat, key = Keyboard.KEY_G)
 public class TestModule extends Module {
@@ -21,6 +20,7 @@ public class TestModule extends Module {
 //    public ModeSetting testmode2 = mode("TestMode", "Value1", "Value1", "Value2", "Value3");
     public ColorSetting color = color("Test", 1f, 1f, 1f, 255);
     public NumberSetting numberSetting = num("NumTest", 1f, 10f, 5f, () -> true);
+    public MultiSelectSetting selectSetting = multi("ChoiceTest", Arrays.asList("A"), Arrays.asList("A", "B", "C"), () -> true);
 
     @Override
     public void onEnable() {

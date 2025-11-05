@@ -48,12 +48,12 @@ public class NumberFrame extends SettingFrame<NumberSetting> implements SettingS
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (RenderUtil.hover(getX(), getY() + getScrollOffset(), mouseX, mouseY, width(), height()-1)) {
+        if (RenderUtil.hover((float) getX(), getY() + getScrollOffset(), mouseX, mouseY, width(), (int) (height()-1))) {
             dragging = true;
         }
     }
 
     @Override public void mouseReleased(int mouseX, int mouseY, int mouseButton) { dragging = false; }
-    @Override public int height() { return 24; }
+    @Override public float height() { return 24; }
     @Override public int width() { return 120; }
 }

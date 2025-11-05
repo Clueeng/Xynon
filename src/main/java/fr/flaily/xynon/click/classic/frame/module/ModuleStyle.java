@@ -7,7 +7,7 @@ import java.awt.*;
 
 public interface ModuleStyle {
     int width();
-    int height();
+    float height();
     int baseHeight = 18;
 
     int backgroundColor = new Color(23, 23, 23).getRGB(),

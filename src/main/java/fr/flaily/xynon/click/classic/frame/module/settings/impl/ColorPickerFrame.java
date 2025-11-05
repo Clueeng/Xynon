@@ -118,7 +118,7 @@ public class ColorPickerFrame extends SettingFrame<ColorSetting> implements Sett
         draggingHue = false;
     }
 
-    @Override public int height() { return 20 + pickerSize + 6; }
+    @Override public float height() { return 20 + pickerSize + 6; }
     @Override public int width() { return 120; }
 
     /* Rendering utilities */

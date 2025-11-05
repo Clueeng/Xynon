@@ -2,16 +2,10 @@ package fr.flaily.xynon.click.classic.frame.module;
 
 import fr.flaily.xynon.click.classic.frame.CategoryFrame;
 import fr.flaily.xynon.click.classic.frame.module.settings.SettingFrame;
-import fr.flaily.xynon.click.classic.frame.module.settings.impl.BooleanFrame;
-import fr.flaily.xynon.click.classic.frame.module.settings.impl.ColorPickerFrame;
-import fr.flaily.xynon.click.classic.frame.module.settings.impl.ModeFrame;
-import fr.flaily.xynon.click.classic.frame.module.settings.impl.NumberFrame;
+import fr.flaily.xynon.click.classic.frame.module.settings.impl.*;
 import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.Setting;
-import fr.flaily.xynon.module.settings.impl.BooleanSetting;
-import fr.flaily.xynon.module.settings.impl.ColorSetting;
-import fr.flaily.xynon.module.settings.impl.ModeSetting;
-import fr.flaily.xynon.module.settings.impl.NumberSetting;
+import fr.flaily.xynon.module.settings.impl.*;
 import fr.flaily.xynon.utils.AnimFloat;
 import fr.flaily.xynon.utils.render.RenderUtil;
 import net.minecraft.client.gui.Gui;
@@ -46,6 +40,8 @@ public class ModuleFrame implements ModuleStyle {
                 settingFrames.add(new ColorPickerFrame(this, (ColorSetting) setting, offset));
             else if (setting instanceof ModeSetting)
                 settingFrames.add(new ModeFrame(this, (ModeSetting) setting, offset));
+            else if(setting instanceof MultiSelectSetting)
+                settingFrames.add(new MultiSelectFrame(this, (MultiSelectSetting) setting, offset));
 
 
             offset += settingFrames.get(settingFrames.size()-1).height();
@@ -65,8 +61,8 @@ public class ModuleFrame implements ModuleStyle {
     }
 
     @Override
-    public int height() {
-        int settingHeight = 0;
+    public float height() {
+        float settingHeight = 0;
         if(settingAnim.getValue() > 0.01f) {
             for(SettingFrame<?> frame : settingFrames) {
                 settingHeight += frame.height();
@@ -76,6 +72,28 @@ public class ModuleFrame implements ModuleStyle {
     }
 
     public void render(int mouseX, int mouseY, float partialTicks, float scroll) {
+
+//        for(Setting<?> setting : parent.getSettings()) {
+//            if (setting instanceof BooleanSetting)
+//                settingFrames.add(new BooleanFrame(this, (BooleanSetting) setting, offset));
+//            else if (setting instanceof NumberSetting)
+//                settingFrames.add(new NumberFrame(this, (NumberSetting) setting, offset));
+//            else if (setting instanceof ColorSetting)
+//                settingFrames.add(new ColorPickerFrame(this, (ColorSetting) setting, offset));
+//            else if (setting instanceof ModeSetting)
+//                settingFrames.add(new ModeFrame(this, (ModeSetting) setting, offset));
+//            else if(setting instanceof MultiSelectSetting)
+//                settingFrames.add(new MultiSelectFrame(this, (MultiSelectSetting) setting, offset));
+//
+//
+//            offset += settingFrames.get(settingFrames.size()-1).height();
+//        }
+        int offset = baseHeight;
+        for(SettingFrame frame : settingFrames) {
+            frame.relY = offset;
+            offset += frame.height();
+        }
+
         settingAnim.update(partialTicks);
         float settingScale = settingAnim.getValue();
 
@@ -95,6 +113,7 @@ public class ModuleFrame implements ModuleStyle {
 
         // Draw settings below module head
         float currentY = baseHeight; // relative to module frame
+        // TODO : Make this animated not just pop out
         for (SettingFrame<?> s : settingFrames) {
             if(!((Setting)s.setting).canShow()) continue;
 
@@ -106,7 +125,7 @@ public class ModuleFrame implements ModuleStyle {
                 s.setScrollOffset(scroll);
                 GL11.glPopMatrix();
             }
-            currentY += s.height() * settingScale; // advance Y with scale
+            currentY += s.height() * settingScale;
         }
     }
 

@@ -4,10 +4,12 @@ import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.module.impl.TestModule;
 import fr.flaily.xynon.module.impl.movement.FlightModule;
 import fr.flaily.xynon.module.impl.render.ClickGUIModule;
+import fr.flaily.xynon.module.impl.render.HUDModule;
+import fr.flaily.xynon.utils.font.CustomFontRenderer;
+import net.minecraft.client.gui.FontRenderer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ModuleManager {
@@ -25,8 +27,27 @@ public class ModuleManager {
 //        register(new TestModule());
         register(new ClickGUIModule());
         register(new FlightModule());
+        register(new TestModule());
+        register(new HUDModule());
 
         Xynon.INSTANCE.debugLogger().sendLog("Finished registering modules");
+    }
+
+    public ArrayList<Module> getModulesConditionally(Predicate<Module> predicate) {
+        return new ArrayList<Module>((Collection<Module>) modules.stream().filter(predicate));
+    }
+
+    public ArrayList<Module> lengthSortedModules(FontRenderer c, ArrayList<Module> mods) {
+        mods.sort(Comparator.comparingDouble(m ->
+                c.getStringWidth(((Module)m).getDisplayName())
+        ).reversed());
+        return mods;
+    }
+    public ArrayList<Module> lengthSortedModules(CustomFontRenderer c, ArrayList<Module> mods) {
+        mods.sort(Comparator.comparingDouble(m ->
+                c.getWidth(((Module)m).getDisplayName())
+        ).reversed());
+        return mods;
     }
 
     private void register(Module module) {

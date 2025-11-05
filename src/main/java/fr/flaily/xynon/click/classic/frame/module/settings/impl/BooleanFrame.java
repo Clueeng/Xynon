@@ -27,14 +27,14 @@ public class BooleanFrame extends SettingFrame<BooleanSetting> implements Settin
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
-        Gui.drawRect(0, 0, width(), height(), new Color(31, 31, 31).getRGB());
+        Gui.drawRect(0, 0, width(), height(), backgroundColor);
         font.drawStringWithShadow(setting.name + ": " + setting.isValue(),
                 4, (height() / 2f) - (font.getHeight(setting.name + ": " + setting.isValue()) / 2f), -1);
     }
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if(RenderUtil.hover(getX(), getY() + getScrollOffset(), mouseX, mouseY, width(), height()-1)) {
+        if(RenderUtil.hover((float) getX(), getY() + getScrollOffset(), mouseX, mouseY, width(), (int) (height()-1))) {
             setting.toggle();
         }
     }
@@ -44,6 +44,6 @@ public class BooleanFrame extends SettingFrame<BooleanSetting> implements Settin
 
     }
 
-    @Override public int height() { return 24; }
+    @Override public float height() { return 24; }
     @Override public int width()  { return 120; }
 }

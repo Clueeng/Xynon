@@ -45,9 +45,9 @@ public class CategoryFrame implements CategoryStyle {
         this.x = x;
         this.y = y;
 
-        int relY = 24;
+        float relY = 24;
         for (Module m : Xynon.INSTANCE.getModuleManager().getModules(category)) {
-            ModuleFrame frame = new ModuleFrame(this, m, relY);
+            ModuleFrame frame = new ModuleFrame(this, m, (int) relY);
             this.moduleFrames.add(frame);
             relY += frame.height();
         }
@@ -99,9 +99,9 @@ public class CategoryFrame implements CategoryStyle {
 //            Xynon.INSTANCE.debugLogger().sendLog("Target: " + scroll.getTarget());
             // Scissor box
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            RenderUtil.prepareScissorBox(x, y, x + width(), y + maxHeight());
+            RenderUtil.prepareScissorBox(x, y + 20, x + width(), y + maxHeight());
 
-            if (moduleAnim.getValue() > 0.01f) {
+            if (moduleAnim.getValue() > 0.01f /*&& m.getY() > y + 8*/) {
                 m.guiShown = true;
                 m.render(mouseX, mouseY, partialTicks, scroll.getValue());
             } else {
@@ -147,8 +147,9 @@ public class CategoryFrame implements CategoryStyle {
 
 //        Xynon.INSTANCE.debugLogger().sendLog(String.valueOf(scroll.getValue()));
 //        Xynon.INSTANCE.debugLogger().sendLog("scrol: " + scroll.getValue());
-        moduleFrames.forEach(m ->
-                m.mouseClicked(mouseX, mouseY, mouseButton, scroll.getTarget()));
+        if(mouseY >= y + 24)
+            moduleFrames.forEach(m ->
+                    m.mouseClicked(mouseX, mouseY, mouseButton, scroll.getTarget()));
 
     }
 
@@ -178,8 +179,8 @@ public class CategoryFrame implements CategoryStyle {
         return 340;
     }
 
-    public int height() {
-        int h = moduleFrames.stream().mapToInt(ModuleFrame::height).sum();
+    public float height() {
+        float h = (float) moduleFrames.stream().mapToDouble(ModuleFrame::height).sum();
         if(h > maxHeight()) return maxHeight();
         return h;
     }
@@ -199,10 +200,10 @@ public class CategoryFrame implements CategoryStyle {
 
         // Clamp max
         int lastMax = 24;
-        int max = (moduleFrames.stream().mapToInt(ModuleFrame::height).sum());
+        double max = (moduleFrames.stream().mapToDouble(ModuleFrame::height).sum());
         int min = 0;
         scroll.setTarget(
-                MathHelper.clamp_float(scroll.getTarget(), -max, min)
+                MathHelper.clamp_float(scroll.getTarget(), (float) -max, min)
         );
     }
 }

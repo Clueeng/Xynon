@@ -1,15 +1,16 @@
 package fr.flaily.xynon.module;
 
+import com.google.common.collect.Lists;
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.click.classic.frame.module.settings.impl.MultiSelectFrame;
 import fr.flaily.xynon.module.settings.Setting;
-import fr.flaily.xynon.module.settings.impl.BooleanSetting;
-import fr.flaily.xynon.module.settings.impl.ColorSetting;
-import fr.flaily.xynon.module.settings.impl.ModeSetting;
-import fr.flaily.xynon.module.settings.impl.NumberSetting;
+import fr.flaily.xynon.module.settings.impl.*;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Supplier;
 
 @Getter
@@ -85,8 +86,18 @@ public class Module {
         add(num);
         return num;
     }
+    public MultiSelectSetting multi(String name, List<String> options, List<String> defaultValues, Supplier<Boolean> supplier) {
+        MultiSelectSetting setting = new MultiSelectSetting(name, defaultValues, supplier, defaultValues.toArray(new String[0]));
+        add(setting);
+        return setting;
+    }
     public ColorSetting color(String name, float a, float b, float c, int alpha) {
         ColorSetting colorSetting = new ColorSetting(name, a, b, c, alpha);
+        add(colorSetting);
+        return colorSetting;
+    }
+    public ColorSetting color(String name, float a, float b, float c, int alpha, Supplier<Boolean> supplier) {
+        ColorSetting colorSetting = new ColorSetting(name, a, b, c, alpha, supplier);
         add(colorSetting);
         return colorSetting;
     }

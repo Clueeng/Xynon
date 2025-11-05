@@ -44,7 +44,7 @@ public class ModeFrame extends SettingFrame<ModeSetting> implements SettingStyle
             this.anim.setTarget((float) setting.current / nbSettings);
         });
 
-        Gui.drawRect(0, 0, width(), height(), new Color(31, 31, 31).getRGB());
+        Gui.drawRect(0, 0, width(), height(), backgroundColor);
         // Draw all modes, with a scissorbox
         float start = font.getWidth(setting.name + ": ");
 
@@ -69,7 +69,7 @@ public class ModeFrame extends SettingFrame<ModeSetting> implements SettingStyle
         GL11.glPopMatrix();
 
 
-        Gui.drawRect(0, 0, start + 4, height(), new Color(31, 31, 31).getRGB());
+        Gui.drawRect(0, 0, start + 4, height(), backgroundColor);
         font.drawStringWithShadow(setting.name + ": ",
                 4, (height() / 2f) - (font.getHeight(setting.name + ": ") / 2f), -1);
 
@@ -78,7 +78,7 @@ public class ModeFrame extends SettingFrame<ModeSetting> implements SettingStyle
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if(RenderUtil.hover(getX(), getY() + getScrollOffset(), mouseX, mouseY, width(), height()-1)) {
+        if(RenderUtil.hover((float) getX(), getY() + getScrollOffset(), mouseX, mouseY, width(), (int) (height()-1))) {
             setting.cycle(mouseButton);
         }
     }
@@ -88,6 +88,6 @@ public class ModeFrame extends SettingFrame<ModeSetting> implements SettingStyle
 
     }
 
-    @Override public int height() { return 24; }
+    @Override public float height() { return 24; }
     @Override public int width()  { return 120; }
 }

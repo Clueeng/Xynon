@@ -70,7 +70,6 @@ public class MotionUtils implements Utils {
     public static void stopSprint() {
         mc.gameSettings.keyBindSprint.pressed = false;
         mc.thePlayer.setSprinting(false);
-        ModuleSprint.forceStop = true;
     }
 
     public static double distance(final double srcX, final double srcZ,
@@ -82,14 +81,14 @@ public class MotionUtils implements Utils {
 
     public static double direction() {
         Minecraft mc = Minecraft.getMinecraft();
-        ModuleKillaura killaura = Midnight.INSTANCE.getModuleManager().getModule(ModuleKillaura.class);
-        ModuleTargetStrafe targetStrafe = Midnight.INSTANCE.getModuleManager().getModule(ModuleTargetStrafe.class);
+//        ModuleKillaura killaura = Midnight.INSTANCE.getModuleManager().getModule(ModuleKillaura.class);
+//        ModuleTargetStrafe targetStrafe = Midnight.INSTANCE.getModuleManager().getModule(ModuleTargetStrafe.class);
         float rotationYaw = mc.thePlayer.rotationYaw;
-        if(killaura.isToggled() && killaura.currentTarget != null && targetStrafe.isToggled()){
-            if(dev.stella.api.utils.MathHelper.accurateDistance(killaura.currentTarget) < targetStrafe.range.getValue()){
-                rotationYaw = dev.stella.api.utils.MathHelper.getRotations(killaura.currentTarget)[0];
-            }
-        }
+//        if(killaura.isToggled() && killaura.currentTarget != null && targetStrafe.isToggled()){
+//            if(dev.stella.api.utils.MathHelper.accurateDistance(killaura.currentTarget) < targetStrafe.range.getValue()){
+//                rotationYaw = dev.stella.api.utils.MathHelper.getRotations(killaura.currentTarget)[0];
+//            }
+//        }
         float forward = 1f;
         if (mc.thePlayer.moveForward < 0f) {
             rotationYaw += 180f;
@@ -142,7 +141,7 @@ public class MotionUtils implements Utils {
     public static void strafe(double speed, float maxTurn) {
         final float motionYaw = (float) Math.toDegrees(Math.atan2(mc.thePlayer.motionZ, mc.thePlayer.motionX)) - 90F;
         final float delta = net.minecraft.util.MathHelper.wrapAngleTo180_float(MotionUtils.moveDirection() - motionYaw);
-        final float yaw = (motionYaw + Math.clamp(delta, -maxTurn, maxTurn)) * 0.017453292F;
+        final float yaw = (motionYaw + MathHelper.clamp_float(delta, -maxTurn, maxTurn)) * 0.017453292F;
         mc.thePlayer.motionX = -net.minecraft.util.MathHelper.sin(yaw) * speed;
         mc.thePlayer.motionZ = MathHelper.cos(yaw) * speed;
     }
