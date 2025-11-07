@@ -2,7 +2,7 @@ package fr.flaily.xynon.module.settings.impl;
 
 import best.azura.eventbus.handler.EventHandler;
 import fr.flaily.xynon.Xynon;
-import fr.flaily.xynon.events.ScreenEvent;
+import fr.flaily.xynon.events.render.ScreenEvent;
 import fr.flaily.xynon.module.settings.Setting;
 
 import java.awt.*;

@@ -2,7 +2,7 @@ package fr.flaily.xynon.module.impl;
 
 import best.azura.eventbus.handler.EventHandler;
 import fr.flaily.xynon.Xynon;
-import fr.flaily.xynon.events.ScreenEvent;
+import fr.flaily.xynon.events.render.ScreenEvent;
 import fr.flaily.xynon.events.player.MotionEvent;
 import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
@@ -11,7 +11,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.Arrays;
 
-@FeatureInfo(name = "Test", category = Module.Category.Combat, key = Keyboard.KEY_G)
+@FeatureInfo(name = "Test", category = Module.Category.Combat, key = Keyboard.KEY_I)
 public class TestModule extends Module {
     public ModeSetting testmode3 = mode("TestMode", "Value1", "Value1", "Value2", "Value3", "Value4", "Value5");
     //    public ModeSetting testmode = mode("TestMode", "Value1", "Value1", "Value2", "Value3");
@@ -36,18 +36,13 @@ public class TestModule extends Module {
 
     @EventHandler
     public void onRender(ScreenEvent event) {
-        mc.fontRendererObj.drawStringWithShadow("Testing", 4f, 4f, color.getValue());
-        Xynon.INSTANCE.getFontManager().getFunnel().size(16).drawStringWithShadow(
-                "Hello", 4f, 16f, -1
-        );
-//        LSDShader.render(1.0f);
+
     }
 
     @EventHandler
     public void onMotion(MotionEvent event) {
-        Xynon.INSTANCE.gameLogger().sendLog("motion ");
-        event.setOnGround(true);
-        event.setPosY(10E5);
-        mc.thePlayer.motionY = 0.0f;
+//        Xynon.INSTANCE.gameLogger().sendLog("motion ");
+//        event.setOnGround(true);
+//        mc.thePlayer.motionY = 0.0f;
     }
 }

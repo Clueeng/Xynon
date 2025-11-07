@@ -1,4 +1,4 @@
-package fr.flaily.xynon.events;
+package fr.flaily.xynon.events.render;
 
 import best.azura.eventbus.events.CancellableEvent;
 import lombok.AllArgsConstructor;

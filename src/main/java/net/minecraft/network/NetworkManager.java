@@ -150,7 +150,10 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
 
     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) throws Exception
     {
-        if (this.channel.isOpen())
+        PacketEvent event = new PacketEvent(p_channelRead0_2_, PacketEvent.PacketType.SERVER_ORIGIN);
+        Xynon.INSTANCE.getEventBus().post(event);
+
+        if (this.channel.isOpen() && !event.isCancelled())
         {
             try
             {

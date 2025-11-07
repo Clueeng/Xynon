@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Random;
 
 import fr.flaily.xynon.Xynon;
-import fr.flaily.xynon.events.ScreenEvent;
+import fr.flaily.xynon.events.render.ScreenEvent;
+import fr.flaily.xynon.module.impl.movement.FlightModule;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -344,6 +345,14 @@ public class GuiIngame extends Gui
 
         // Xynon: HUD
         Xynon.INSTANCE.getEventBus().post(new ScreenEvent(partialTicks));
+        // I dont know why but aight
+        Xynon.INSTANCE.getModuleManager().getModules().forEach(m -> {
+            if(m instanceof FlightModule) {
+                System.out.println("test " + m.getModAnimation().getValue());
+                System.out.println("test " + m.getModAnimation().getTarget());
+            }
+            m.getModAnimation().update(partialTicks);
+        });
 
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

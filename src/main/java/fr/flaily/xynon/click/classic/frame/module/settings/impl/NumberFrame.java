@@ -42,7 +42,8 @@ public class NumberFrame extends SettingFrame<NumberSetting> implements SettingS
         if (dragging) {
             double percent = (mouseX - getX()) / (double) width();
             percent = Math.max(0, Math.min(1, percent));
-            setting.value = min + (max - min) * percent;
+//            setting.value = min + (max - min) * percent;
+            setting.setValue(min + (max - min) * percent);
         }
     }
 

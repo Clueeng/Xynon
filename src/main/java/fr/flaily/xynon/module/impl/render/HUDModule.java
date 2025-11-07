@@ -2,7 +2,7 @@ package fr.flaily.xynon.module.impl.render;
 
 import best.azura.eventbus.handler.EventHandler;
 import fr.flaily.xynon.Xynon;
-import fr.flaily.xynon.events.ScreenEvent;
+import fr.flaily.xynon.events.render.ScreenEvent;
 import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.impl.ColorSetting;
@@ -10,7 +10,9 @@ import fr.flaily.xynon.module.settings.impl.ModeSetting;
 import fr.flaily.xynon.module.settings.impl.MultiSelectSetting;
 import fr.flaily.xynon.utils.font.CustomFontRenderer;
 import fr.flaily.xynon.utils.render.ColorUtils;
+import net.minecraft.client.gui.Gui;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -50,22 +52,34 @@ public class HUDModule extends Module {
 
     public void drawArrayList(ScreenEvent event) {
         float padding = 4.0f;
+        float margin = 4.0f;
+        float lineHeight = 4.0f;
+
         float xPos = event.getSr().getScaledWidth() - padding;
         float yPos = 0.0f + padding;
-        float height = font.getHeight("A") + 1.0f;
+        float height = font.getHeight("A") + 1.0f + lineHeight;
 
         int index = 0;
-        // TODO: Replace this later for animations
         ArrayList<Module> test = Xynon.INSTANCE.getModuleManager().modules;
         ArrayList<Module> sort = Xynon.INSTANCE.getModuleManager().lengthSortedModules(font, test);
+
+        // TODO: Replace this later for animations
+        Module lastModule;
         for(Module module : sort) {
-            if(!module.isToggled()) continue;
+            if(module.getModAnimation().getValue() < 0.01f) continue;
 
             this.hudColor = getColor(index);
-            float moduleX = xPos - font.getWidth(module.getDisplayName());
-            font.drawStringWithShadow(module.getDisplayName(), moduleX, yPos, this.hudColor);
+            float modLength = font.getWidth(module.getDisplayName()) * module.getModAnimation().getValue();
+            float moduleX = xPos - modLength;
 
-            yPos += height;
+            Gui.drawRect(moduleX - margin, yPos, moduleX + modLength, yPos + (height) * module.getModAnimation().getValue(),
+                    new Color(0, 0, 0, 110).getRGB());
+            font.drawStringWithShadow(module.getDisplayName(), moduleX - (margin / 2), yPos + (lineHeight / 2f), this.hudColor);
+
+
+            yPos += (height) * module.getModAnimation().getValue();
+
+            lastModule = module;
             index++;
         }
     }
