@@ -36,6 +36,10 @@ public class HUDModule extends Module {
         if(components.isSelected("ArrayList")) {
             drawArrayList(event);
         }
+        if(components.isSelected("Watermark")) {
+            String watermark = "Xynon";
+            font.drawStringWithShadow(watermark, 4, 4, mainColor.getColor().getRGB());
+        }
     }
 
     private int getColor(int moduleOffset) {
@@ -57,7 +61,7 @@ public class HUDModule extends Module {
 
         float xPos = event.getSr().getScaledWidth() - padding;
         float yPos = 0.0f + padding;
-        float height = font.getHeight("A") + 1.0f + lineHeight;
+        float height = font.getHeight("B") + 1.0f + lineHeight;
 
         int index = 0;
         ArrayList<Module> test = Xynon.INSTANCE.getModuleManager().modules;

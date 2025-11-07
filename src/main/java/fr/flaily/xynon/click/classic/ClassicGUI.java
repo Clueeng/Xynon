@@ -1,17 +1,11 @@
 package fr.flaily.xynon.click.classic;
 
-import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.click.classic.frame.CategoryFrame;
 import fr.flaily.xynon.module.Module;
-import fr.flaily.xynon.utils.AnimFloat;
-import fr.flaily.xynon.utils.EaseHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.util.vector.Vector2f;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
