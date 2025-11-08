@@ -17,6 +17,7 @@ It all depends on how well the client is received by the community
 If I see no reason in maintaining a client, I might drop it, while occasionally updating it from time to time
 
 # Setup
+The client can be setup in many ways, but here is what I've used or currently using
 
 ## Visual Studio Code Setup (Linux)
 ### Requirements
