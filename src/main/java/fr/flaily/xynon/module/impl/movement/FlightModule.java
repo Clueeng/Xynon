@@ -8,6 +8,8 @@ import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.impl.ModeSetting;
 import fr.flaily.xynon.module.settings.impl.NumberSetting;
 import fr.flaily.xynon.utils.MotionUtils;
+import net.minecraft.util.EnumChatFormatting;
+
 import org.lwjgl.input.Keyboard;
 
 @FeatureInfo(name = "Flight", key = Keyboard.KEY_G, category = Module.Category.Movement)
@@ -47,5 +49,10 @@ public class FlightModule extends Module {
     @Override
     public void onDisable() {
         super.onDisable();
+    }
+
+    @Override
+    public String getListName() {
+        return this.name + EnumChatFormatting.GRAY + " [" + modes.getCurrent() + "]";
     }
 }

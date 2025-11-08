@@ -11,8 +11,6 @@ import lombok.Getter;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -85,7 +83,6 @@ public class CategoryFrame implements CategoryStyle {
         GL11.glScalef(scale, scale, 1);
         GL11.glTranslatef(-cx, -cy, 0);
 
-//        moduleFrames.forEach(m -> m.render(mouseX, mouseY, partialTicks));
         moduleAnim.update(partialTicks);
         float moduleScale = moduleAnim.getValue();
 
@@ -96,8 +93,6 @@ public class CategoryFrame implements CategoryStyle {
             // Translate visually based on module animation
             GL11.glTranslatef(0, -relY * (1f - moduleScale), 0);
             GL11.glTranslatef(0, scroll.getValue(), 0);
-//            Xynon.INSTANCE.debugLogger().sendLog("Value: " + scroll.getValue());
-//            Xynon.INSTANCE.debugLogger().sendLog("Target: " + scroll.getTarget());
             // Scissor box
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
             RenderUtil.prepareScissorBox(x, y + 20, x + width(), y + maxHeight());
@@ -124,9 +119,9 @@ public class CategoryFrame implements CategoryStyle {
 
         // Draw panel and modules
         CustomFontRenderer font = Xynon.INSTANCE.getFontManager().getFunnel().size(20);
-        Gui.drawRect(x, y + 24 - 5, x + width(), y + 24, new Color(12, 12, 22, 255).getRGB());
-        RenderUtil.drawRoundedRect(x, y, width(), 24, 13f, new Color(12, 12, 22, 255).getRGB());
-        font.drawString(this.category.name(), x + 4, y + 4, -1);
+        Gui.drawRect(x, y + 24 - 5, x + width(), y + 24, new Color(12, 12, 11, 255).getRGB());
+        RenderUtil.drawRoundedRect(x, y, width(), 24, 13f, new Color(12, 12, 11, 255).getRGB());
+        font.drawCenteredString(this.category.name(), x + (width() / 2f), y + 12, -1);
 
         mouseDragged(mouseX, mouseY);
         hovering = RenderUtil.hover(x, y, mouseX, mouseY, width(), maxHeight());

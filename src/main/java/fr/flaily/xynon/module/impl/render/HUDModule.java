@@ -25,20 +25,20 @@ public class HUDModule extends Module {
     );
 
     public ModeSetting hudColorMode = mode("Color mode", "Single", () -> true, "Single", "Double", "Astolfo");
-    public ColorSetting mainColor = color("Main Color", 255, 255, 255, 255, () -> hudColorMode.is("Single") || hudColorMode.is("Double"));
-    public ColorSetting accentColor = color("Accent Color", 255, 255, 255, 255, () -> hudColorMode.is("Double"));
+    public ColorSetting mainColor = color("Main Color", 360.0f, 1.0f, 1.0f, 255, () -> hudColorMode.is("Single") || hudColorMode.is("Double"));
+    public ColorSetting accentColor = color("Accent Color", 360.0f, 1.0f, 1.0f, 255, () -> hudColorMode.is("Double"));
 
     public int hudColor;
 
     @EventHandler
     public void onRender(ScreenEvent event) {
+        if(components.isSelected("Watermark")) {
+            String watermark = "Xynon";
+            mc.fontRendererObj.drawStringWithShadow(watermark, 6, 6, -1);
+        }
 
         if(components.isSelected("ArrayList")) {
             drawArrayList(event);
-        }
-        if(components.isSelected("Watermark")) {
-            String watermark = "Xynon";
-            font.drawStringWithShadow(watermark, 4, 4, mainColor.getColor().getRGB());
         }
     }
 
@@ -55,9 +55,9 @@ public class HUDModule extends Module {
     }
 
     public void drawArrayList(ScreenEvent event) {
-        float padding = 4.0f;
-        float margin = 4.0f;
-        float lineHeight = 4.0f;
+        float padding = 0.0f;
+        float margin = 3.0f;
+        float lineHeight = 2.0f;
 
         float xPos = event.getSr().getScaledWidth() - padding;
         float yPos = 0.0f + padding;
@@ -71,17 +71,22 @@ public class HUDModule extends Module {
         Module lastModule;
         for(Module module : sort) {
             if(module.getModAnimation().getValue() < 0.01f) continue;
+            float anim = module.getModAnimation().getValue();
+            // System.out.println(module.getModAnimation().getValue());
 
             this.hudColor = getColor(index);
-            float modLength = font.getWidth(module.getDisplayName()) * module.getModAnimation().getValue();
+            float modLength = font.getWidth(module.getListName()) * anim;
             float moduleX = xPos - modLength;
 
-            Gui.drawRect(moduleX - margin, yPos, moduleX + modLength, yPos + (height) * module.getModAnimation().getValue(),
+            Gui.drawRect(moduleX - margin, yPos, moduleX + modLength, yPos + (height) * anim,
                     new Color(0, 0, 0, 110).getRGB());
-            font.drawStringWithShadow(module.getDisplayName(), moduleX - (margin / 2), yPos + (lineHeight / 2f), this.hudColor);
+            font.drawStringWithShadow(module.getListName(), moduleX - (margin / 2), yPos + (lineHeight / 2f), this.hudColor);
+
+            Gui.drawRect(moduleX - margin - 1, yPos, moduleX - margin, yPos + (height) * anim,
+                    this.hudColor);
 
 
-            yPos += (height) * module.getModAnimation().getValue();
+            yPos += (height) * anim;
 
             lastModule = module;
             index++;

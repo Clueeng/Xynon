@@ -45,7 +45,7 @@ public class ModuleManager {
     }
     public ArrayList<Module> lengthSortedModules(CustomFontRenderer c, ArrayList<Module> mods) {
         mods.sort(Comparator.comparingDouble(m ->
-                c.getWidth(((Module)m).getDisplayName())
+                c.getWidth(((Module)m).getListName())
         ).reversed());
         return mods;
     }

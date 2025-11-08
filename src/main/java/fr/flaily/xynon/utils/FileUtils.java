@@ -1,6 +1,8 @@
 package fr.flaily.xynon.utils;
 
 import java.io.*;
+
+import fr.flaily.xynon.Xynon;
 public class FileUtils {
 
     public static String readFile(File file) {
@@ -30,5 +32,17 @@ public class FileUtils {
             e.printStackTrace();
         }
         return stringBuilder.toString();
+    }
+
+    public static void writeFile(File file, String content) {
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream));
+            bufferedWriter.write(content);
+            bufferedWriter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Xynon.INSTANCE.getLoggerManager().debugLogger.sendLog("Failed to write file: " + file.getAbsolutePath());
+        }
     }
 }

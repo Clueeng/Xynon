@@ -347,11 +347,11 @@ public class GuiIngame extends Gui
         Xynon.INSTANCE.getEventBus().post(new ScreenEvent(partialTicks));
         // I dont know why but aight
         Xynon.INSTANCE.getModuleManager().getModules().forEach(m -> {
-            if(m instanceof FlightModule) {
-                System.out.println("test " + m.getModAnimation().getValue());
-                System.out.println("test " + m.getModAnimation().getTarget());
+            if(m.getModAnimation().getTarget() == 0.0f && m.getModAnimation().getValue() < 0.01f){
+                m.getModAnimation().setValue(0.0f);
+            } else {
+                m.getModAnimation().update(partialTicks);
             }
-            m.getModAnimation().update(partialTicks);
         });
 
         GlStateManager.enableBlend();

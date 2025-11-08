@@ -11,6 +11,8 @@ import fr.flaily.xynon.utils.render.RenderUtil;
 import net.minecraft.client.gui.Gui;
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.RangeSet;
+
 import java.util.ArrayList;
 
 public class ModuleFrame implements ModuleStyle {
@@ -42,6 +44,8 @@ public class ModuleFrame implements ModuleStyle {
                 settingFrames.add(new ModeFrame(this, (ModeSetting) setting, offset));
             else if(setting instanceof MultiSelectSetting)
                 settingFrames.add(new MultiSelectFrame(this, (MultiSelectSetting) setting, offset));
+            else if(setting instanceof RangeSetting)
+                settingFrames.add(new RangeFrame(this, (RangeSetting) setting, offset));
 
 
             offset += settingFrames.get(settingFrames.size()-1).height();

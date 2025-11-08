@@ -133,22 +133,37 @@ public class NetworkSystem
     /**
      * Adds a channel that listens locally
      */
+    
     public SocketAddress addLocalEndpoint()
     {
         ChannelFuture channelfuture;
 
         synchronized (this.endpoints)
         {
-            channelfuture = ((ServerBootstrap)((ServerBootstrap)(new ServerBootstrap()).channel(LocalServerChannel.class)).childHandler(new ChannelInitializer<Channel>()
+            channelfuture = ((ServerBootstrap)((ServerBootstrap)(new ServerBootstrap())
+            .channel(LocalServerChannel.class))
+            .childHandler(new ChannelInitializer<Channel>()
             {
-                protected void initChannel(Channel p_initChannel_1_) throws Exception
+                @Override
+                protected void initChannel(Channel ch) throws Exception
                 {
+                    // NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
+                    // networkmanager.setNetHandler(new NetHandlerHandshakeMemory(NetworkSystem.this.mcServer, networkmanager));
+                    // NetworkSystem.this.networkManagers.add(networkmanager);
+                    // ch.pipeline().addLast("packet_handler", networkmanager);
+
                     NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
                     networkmanager.setNetHandler(new NetHandlerHandshakeMemory(NetworkSystem.this.mcServer, networkmanager));
                     NetworkSystem.this.networkManagers.add(networkmanager);
-                    p_initChannel_1_.pipeline().addLast((String)"packet_handler", (ChannelHandler)networkmanager);
+                    ch.pipeline().addLast("packet_handler", networkmanager);
                 }
-            }).group((EventLoopGroup)eventLoops.getValue()).localAddress(LocalAddress.ANY)).bind().syncUninterruptibly();
+            })
+            .group(SERVER_LOCAL_EVENTLOOP.getValue())
+            .localAddress(LocalAddress.ANY))
+            .bind()
+            .syncUninterruptibly();
+            // .group((EventLoopGroup)eventLoops.getValue()).localAddress(LocalAddress.ANY)).bind().syncUninterruptibly();
+            
             this.endpoints.add(channelfuture);
         }
 

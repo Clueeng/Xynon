@@ -33,6 +33,10 @@ public class Module {
         return name;
     }
 
+    public String getListName() {
+        return this.name;
+    }
+
     public Module() {
         if(this.getClass().isAnnotationPresent(FeatureInfo.class)) {
             FeatureInfo info = getClass().getAnnotation(FeatureInfo.class);
@@ -120,5 +124,16 @@ public class Module {
         ModeSetting modeSetting = new ModeSetting(name, value, supplier, modes);
         add(modeSetting);
         return modeSetting;
+    }
+    public RangeSetting range(String name, double min, double max, double valueMin, double valueMax, Supplier<Boolean> supplier) {
+        RangeSetting rangeSetting = new RangeSetting(name, min, max, valueMin, valueMax, supplier);
+        add(rangeSetting);
+        return rangeSetting;
+    }
+    public RangeSetting range(String name, double min, double max, double valueMin, double
+            valueMax, double step, Supplier<Boolean> supplier) {
+        RangeSetting rangeSetting = new RangeSetting(name, min, max, valueMin, valueMax, step, supplier);
+        add(rangeSetting);
+        return rangeSetting;
     }
 }

@@ -8,10 +8,10 @@ import java.util.UUID;
 
 public class Session
 {
-    private final String username;
-    private final String playerID;
-    private final String token;
-    private final Session.Type sessionType;
+    private String username;
+    private String playerID;
+    private String token;
+    private Session.Type sessionType;
 
     public Session(String usernameIn, String playerIDIn, String tokenIn, String sessionTypeIn)
     {
@@ -60,6 +60,14 @@ public class Session
     public Session.Type getSessionType()
     {
         return this.sessionType;
+    }
+
+
+    public void switchSession(Session toChange) {
+        this.sessionType = toChange.sessionType;
+        this.playerID = toChange.playerID;
+        this.token = toChange.token;
+        this.username = toChange.getUsername();
     }
 
     public static enum Type

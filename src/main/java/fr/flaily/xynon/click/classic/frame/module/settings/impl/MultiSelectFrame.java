@@ -80,7 +80,7 @@ public class MultiSelectFrame extends SettingFrame<MultiSelectSetting> implement
         // Rest of choices
         if(mouseButton == 0 && expanded) {
             for(int i = 0; i < setting.getOptions().size(); i++) {
-                float yPos = getY() + getScrollOffset() + (i * getChoiceHeight()) + getChoiceHeight();
+                float yPos = getY() + getScrollOffset() + (i * getChoiceHeight()) + getChoiceHeight() + 4;
                 if(RenderUtil.hover(getX(), yPos, mouseX, mouseY, width(), getChoiceHeight())) {
                     // Clicked within a mode
                     String option = setting.getOptions().get(i);

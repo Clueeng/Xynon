@@ -760,7 +760,7 @@ public abstract class ServerConfigurationManager
 
     public void addOp(GameProfile profile)
     {
-        this.ops.addEntry(new UserListOpsEntry(profile, this.mcServer.getOpPermissionLevel(), this.ops.bypassesPlayerLimit(profile)));
+        this.ops.addEntry(new UserListOpsEntry(profile, this.mcServer.getOpPermissionLevel(), this.ops.func_183026_b(profile)));
     }
 
     public void removeOp(GameProfile profile)

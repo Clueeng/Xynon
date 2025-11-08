@@ -24,9 +24,16 @@ public class AnimFloat {
     }
 
     public void update(float partialTicks) {
+        if (!Float.isFinite(partialTicks) || !Float.isFinite(value) || !Float.isFinite(target) || !Float.isFinite(speed)) {
+            return;
+        }
         long now = System.currentTimeMillis();
         int fps = Minecraft.getDebugFPS();
+        if (fps <= 0) fps = 60;
+        
         float delta = (((target - value) * speed * partialTicks) / fps) * 300f;
+        if (!Float.isFinite(delta)) delta = 0f;
+
         lastTime = now;
         value += delta;
         value = Math.max(0f, Math.min(1f, value));

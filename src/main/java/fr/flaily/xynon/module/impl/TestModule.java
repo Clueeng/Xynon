@@ -7,8 +7,14 @@ import fr.flaily.xynon.events.player.MotionEvent;
 import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.impl.*;
+import fr.flaily.xynon.utils.alts.Alt;
+import fr.flaily.xynon.utils.alts.impl.ComboAlt;
+import fr.flaily.xynon.utils.alts.impl.CookieAlt;
+import fr.flaily.xynon.utils.alts.impl.SessionAlt;
+
 import org.lwjgl.input.Keyboard;
 
+import java.awt.font.NumericShaper.Range;
 import java.util.Arrays;
 
 @FeatureInfo(name = "Test", category = Module.Category.Combat, key = Keyboard.KEY_I)
@@ -20,18 +26,30 @@ public class TestModule extends Module {
 //    public ModeSetting testmode2 = mode("TestMode", "Value1", "Value1", "Value2", "Value3");
     public ColorSetting color = color("Test", 1f, 1f, 1f, 255);
     public NumberSetting numberSetting = num("NumTest", 1f, 10f, 5f, () -> true);
-    public MultiSelectSetting selectSetting = multi("ChoiceTest", Arrays.asList("A"), Arrays.asList("A", "B", "C"), () -> true);
+    public MultiSelectSetting selectSetting = multi("ChoiceTest", Arrays.asList(), Arrays.asList("A", "B", "C"), () -> true);
+    public RangeSetting rangeSetting = range("RangeTest", 0.0, 100.0, 25.0, 75.0, 1.0, () -> true);
 
     @Override
     public void onEnable() {
         super.onEnable();
         Xynon.INSTANCE.gameLogger().sendLog("Testing logger and module");
+
+        SessionAlt sessionAlt = new SessionAlt();
+        sessionAlt.login();
+
+        Xynon.INSTANCE.getAltManager().addAlt(
+            sessionAlt
+        );
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
         Xynon.INSTANCE.gameLogger().sendLog("Bye.");
+
+        for (Alt alts : Xynon.INSTANCE.getAltManager().alts) {
+            System.out.println(alts.toJson());
+        }
     }
 
     @EventHandler
