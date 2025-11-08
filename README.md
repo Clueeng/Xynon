@@ -35,7 +35,7 @@ Open launch.json (Ctrl+Shift+P -> launch.json)
 Change the <strong>'cwd'</strong> property to a custom .minecraft if needed
 Change the <strong>'javaExec'</strong> property to your Java 21 installation path
 Change <strong>'vmArgs'</strong> path to your .minecraft/test_natives
-## Running the client
+### Running the client
 Go to 'Run and Debug' or press CTRL+SHIFT+D
 Select the 'Start MCP' run configuration
 Click run <br>
