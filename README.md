@@ -27,8 +27,10 @@ To setup this project in visual studio code you need a few things
 - The repository cloned
 
 
-/!\ Move the native folder in your .minecraft <br>
-``mv ./test_natives $HOME/.minecraft/`` <br>
+> ⚠️ Move the native folder in your .minecraft<br>
+```bash
+mv ./test_natives $HOME/.minecraft/
+```
 
 Wait for maven to index everything <br>
 
@@ -50,8 +52,10 @@ To setup this project in Intellij IDEA you need a few things
 - Java 21
 - The repository cloned
 
-/!\ Move the native folder in your .minecraft <br>
-``mv ./test_natives $HOME/.minecraft/`` <br>
+> ⚠️ Move the native folder in your .minecraft<br>
+```bash
+mv ./test_natives $HOME/.minecraft/
+```
 
 Wait for maven to index everything <br>
 
