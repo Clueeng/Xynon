@@ -17,8 +17,8 @@
             "mainClass": "Start",
             "projectName": "MCP",
             "javaExec": "/usr/lib/jvm/java-21-openjdk/bin/java",
-            "cwd": "/home/flaily/.minecraft/",
-            "vmArgs": "-Djava.library.path=/home/flaily/.minecraft/test_natives",
+            "cwd": "${env:HOME}/.minecraft/",
+            "vmArgs": "-Djava.library.path=${env:HOME}/.minecraft/test_natives",
         }
     ]
 }
