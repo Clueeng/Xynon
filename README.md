@@ -1,6 +1,6 @@
 # Xynon Client
-Xynon Client is an open-source Minecraft 1.8.9 hacked client, in early development
-Feel free to make pull requests
+Xynon Client is an open-source Minecraft 1.8.9 hacked client, in early development <br>
+Feel free to make pull requests <br>
 The client is still in its very early stages, hence why no bypasses have been made yet
 
 Want to support the project ? Don't hesitate to leave a star on the repo!
@@ -29,17 +29,19 @@ To setup this project in visual studio code you need a few things
 
 /!\ Move the native folder in your .minecraft <br>
 ``mv ./test_natives $HOME/.minecraft/`` <br>
+
 Wait for maven to index everything <br>
 
 ### launch.json
-Open launch.json (Ctrl+Shift+P -> launch.json)
-Change the <strong>'cwd'</strong> property to a custom .minecraft if needed
-Change the <strong>'javaExec'</strong> property to your Java 21 installation path
-Change <strong>'vmArgs'</strong> path to your .minecraft/test_natives
+Open launch.json (Ctrl+Shift+P -> launch.json) <br>
+Change the <strong>'cwd'</strong> property to a custom .minecraft if needed <br>
+Change the <strong>'javaExec'</strong> property to your Java 21 installation path <br>
+Change <strong>'vmArgs'</strong> path to your .minecraft/test_natives <br>
 ### Running the client
-Go to 'Run and Debug' or press CTRL+SHIFT+D
-Select the 'Start MCP' run configuration
+Go to 'Run and Debug' or press CTRL+SHIFT+D <br>
+Select the 'Start MCP' run configuration <br>
 Click run <br>
+
 Enjoy!
 
 ## IntelliJ IDEA
@@ -50,6 +52,7 @@ To setup this project in Intellij IDEA you need a few things
 
 /!\ Move the native folder in your .minecraft <br>
 ``mv ./test_natives $HOME/.minecraft/`` <br>
+
 Wait for maven to index everything <br>
 
 ### Run Configuration
