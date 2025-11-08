@@ -6,13 +6,13 @@ The client is still in its very early stages, hence why no bypasses have been ma
 Want to support the project ? Don't hesitate to leave a star on the repo!
 
 ## F.A.Q
-- How do I use the client ?
+- How do I use the client ? <br>
 For now, the only way to use the client is to set it up and running it within an IDE, a launcher will be made later
-- Will there be a scripting API ?
+- Will there be a scripting API ? <br>
 No plans for one as of now, but I do want to add one eventually
-- Will the client ever be paid ?
+- Will the client ever be paid ? <br>
 Nope, free, open-source, forver
-- Will the client always be maintained ?
+- Will the client always be maintained ? <br>
 It all depends on how well the client is received by the community
 If I see no reason in maintaining a client, I might drop it, while occasionally updating it from time to time
 
