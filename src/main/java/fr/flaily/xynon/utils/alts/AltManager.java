@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,10 +12,12 @@ import com.google.gson.JsonArray;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.utils.FileUtils;
+import lombok.Getter;
 
 public class AltManager {
     // TODO : Replace the login methods with PvpCafe's library when it's ready
     
+    @Getter
     public ArrayList<Alt> alts = new ArrayList<>();
 
     public AltManager() {
@@ -25,6 +28,7 @@ public class AltManager {
     public void addAlt(Alt alt) {
         this.alts.add(alt);
         this.writeAltsToFile();
+        System.out.println("Added alt: " + alt.username);
     }
 
     public File getAltFile() {
@@ -37,6 +41,15 @@ public class AltManager {
             }
         }
         return altFile;
+    }
+
+    public boolean alreadyIn(Alt alt) {
+        for(Alt a : getAlts()) {
+            if(a.toJson().equals(alt.toJson())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void writeAltsToFile() {
@@ -62,6 +75,9 @@ public class AltManager {
         String content = FileUtils.readFile(altFile);
         ArrayList<Alt> loadedAlts = parseAltsFromJson(content);
         this.alts.clear();
+        loadedAlts.forEach(a -> {
+            System.out.println(a.toJson());
+        });
         this.alts.addAll(loadedAlts);
     }
     private ArrayList<Alt> parseAltsFromJson(String content) {
@@ -94,6 +110,21 @@ public class AltManager {
                     }
 
                     list.add(cookie);
+                }else if(obj.has("refreshToken")) {
+                    // SessionAlt
+                    fr.flaily.xynon.utils.alts.impl.SessionAlt session = new fr.flaily.xynon.utils.alts.impl.SessionAlt();
+                    session.setRefreshToken(obj.get("refreshToken").getAsString());
+                    if(obj.has("lastLogin")) {
+                        // session.setLastLogin(obj.get("lastLogin").getAsLong());
+                        session.lastLogin = obj.get("lastLogin").getAsLong();
+                    }
+                    if(obj.has("username")) {
+                        session.setUsername(obj.get("username").getAsString());
+                    }
+                    if(obj.has("uuid")) {
+                        session.setUuid(obj.get("uuid").getAsString());
+                    }
+                    list.add(session);
                 }
             }
         } catch (Exception e) {

@@ -4,17 +4,15 @@ import best.azura.eventbus.handler.EventHandler;
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.render.ScreenEvent;
 import fr.flaily.xynon.events.player.MotionEvent;
+import fr.flaily.xynon.events.player.RotationEvent;
 import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.impl.*;
 import fr.flaily.xynon.utils.alts.Alt;
-import fr.flaily.xynon.utils.alts.impl.ComboAlt;
-import fr.flaily.xynon.utils.alts.impl.CookieAlt;
 import fr.flaily.xynon.utils.alts.impl.SessionAlt;
 
 import org.lwjgl.input.Keyboard;
 
-import java.awt.font.NumericShaper.Range;
 import java.util.Arrays;
 
 @FeatureInfo(name = "Test", category = Module.Category.Combat, key = Keyboard.KEY_I)
@@ -32,24 +30,16 @@ public class TestModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
-        Xynon.INSTANCE.gameLogger().sendLog("Testing logger and module");
-
-        SessionAlt sessionAlt = new SessionAlt();
-        sessionAlt.login();
-
-        Xynon.INSTANCE.getAltManager().addAlt(
-            sessionAlt
-        );
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        Xynon.INSTANCE.gameLogger().sendLog("Bye.");
+    }
 
-        for (Alt alts : Xynon.INSTANCE.getAltManager().alts) {
-            System.out.println(alts.toJson());
-        }
+    @EventHandler
+    public void onRotate(RotationEvent event) {
+        event.setYaw(event.getYaw() + 90.0f);
     }
 
     @EventHandler

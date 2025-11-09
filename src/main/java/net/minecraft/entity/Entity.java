@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.player.EventStrafe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFenceGate;
@@ -12,6 +15,8 @@ import net.minecraft.block.BlockWall;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.crash.CrashReport;
@@ -1234,11 +1239,30 @@ public abstract class Entity implements ICommandSender
                 f = 1.0F;
             }
 
+            // f = friction / f;
+            // strafe = strafe * f;
+            // forward = forward * f;
+            // float f1 = MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F);
+            // float f2 = MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F);
+            // this.motionX += (double)(strafe * f2 - forward * f1);
+            // this.motionZ += (double)(forward * f2 + strafe * f1);
+
             f = friction / f;
             strafe = strafe * f;
             forward = forward * f;
-            float f1 = MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F);
-            float f2 = MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F);
+            float f1, f2;
+            if(this instanceof EntityPlayerSP localPlayer){
+                EventStrafe e = new EventStrafe(localPlayer.serverYaw);
+                Xynon.INSTANCE.getEventBus().post(e);
+
+                f1 = MathHelper.sin(e.getYaw() * (float)Math.PI / 180.0F);
+                f2 = MathHelper.cos(e.getYaw() * (float)Math.PI / 180.0F);
+
+
+            }else{
+                f1 = MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F);
+                f2 = MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F);
+            }
             this.motionX += (double)(strafe * f2 - forward * f1);
             this.motionZ += (double)(forward * f2 + strafe * f1);
         }

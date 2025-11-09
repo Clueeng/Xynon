@@ -1,4 +1,5 @@
 package fr.flaily.xynon.utils.alts.impl;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.JsonObject;
@@ -16,8 +17,10 @@ import net.minecraft.client.Minecraft;
 
 public class SessionAlt extends Alt {
     @Setter @Getter
-    private String refreshToken, username, uuid;
-    private long lastLogin = 0L;
+    private String refreshToken;
+    @Setter @Getter
+    private String uuid;
+    public long lastLogin = 0L;
 
     // Constructor for existing session alts
     public SessionAlt(String refreshToken, long lastLogin, String username, String uuid) {
@@ -28,6 +31,8 @@ public class SessionAlt extends Alt {
     }
     public SessionAlt() {
         this.refreshToken = "";
+        this.uuid = "";
+        this.username = "Unknown";
     }
     public JsonObject toJson() {
         JsonObject object = new JsonObject();
@@ -35,6 +40,8 @@ public class SessionAlt extends Alt {
         object.add("refreshToken", new JsonPrimitive(this.refreshToken));
         // Used to know when to refresh the token (every 24 hours)
         object.addProperty("lastLogin", this.lastLogin);
+        object.addProperty("username", this.username);
+        object.addProperty("uuid", this.uuid.toString());
         return object;
     }
 
@@ -44,18 +51,27 @@ public class SessionAlt extends Alt {
         Minecraft mc = Minecraft.getMinecraft();
 
         // Skip refresh if last login was less than 24 hours ago or that it's the first login
-        boolean keep = System.currentTimeMillis() - lastLogin > (24 * 60 * 60 * 1000) || this.lastLogin != 0L;
-        Xynon.INSTANCE.gameLogger().sendLog("Logging in with session alt. Refresh: " + keep);
-        Xynon.INSTANCE.gameLogger().sendLog("Last login: " + this.lastLogin);
-        Xynon.INSTANCE.gameLogger().sendLog("Delay since last login: " + (System.currentTimeMillis() - this.lastLogin));
+        boolean isNew = this.lastLogin == 0L;
+        boolean isExpired = System.currentTimeMillis() - this.lastLogin > (24 * 60 * 60 * 1000);
+        boolean keep = !isExpired && !isNew;
+        Xynon.INSTANCE.debugLogger().sendLog("Logging in with session alt. Refresh: " + keep);
+        Xynon.INSTANCE.debugLogger().sendLog("Last login: " + this.lastLogin);
+        Xynon.INSTANCE.debugLogger().sendLog("Delay since last login: " + (System.currentTimeMillis() - this.lastLogin));
         
-        if(!keep) {
+        if(keep) {
+            Xynon.INSTANCE.debugLogger().sendLog("Keeping session alive.");
+            Xynon.INSTANCE.debugLogger().sendLog("Username: " + this.getUsername());
+            Xynon.INSTANCE.debugLogger().sendLog("UUID: " + this.getUuid());
+            Xynon.INSTANCE.debugLogger().sendLog("Refresh Token: " + this.getRefreshToken());
+
             mc.session = new net.minecraft.util.Session(
                     this.getUsername(),
-                    this.getUuid(),
+                    this.getUuid().toString(),
                     this.getRefreshToken(),
                     "mojang"
             );
+            this.username = mc.session.getUsername();
+            System.out.println(this.username + " logged in with existing session.");
             return;
         }
 
@@ -83,6 +99,13 @@ public class SessionAlt extends Alt {
             this.username = session.username();
             this.uuid = session.uuid().toString();
             this.refreshToken = session.session();
+
+            if(Xynon.INSTANCE.getAltManager().alreadyIn(this)){ 
+                // delete old
+                Xynon.INSTANCE.getAltManager().getAlts().removeIf(a -> a.username.equals(this.username) && a instanceof SessionAlt);
+            }
+            
+            Xynon.INSTANCE.getAltManager().addAlt(this);
 
         }).exceptionally(throwable -> {
             throwable.printStackTrace();

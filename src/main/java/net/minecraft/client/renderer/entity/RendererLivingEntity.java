@@ -129,8 +129,19 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
             try
             {
-                float f = this.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
-                float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+                // float f = this.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
+                // float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+                float f;
+                float f1;
+                if(entity instanceof EntityPlayerSP){
+                    EntityPlayerSP e = (EntityPlayerSP)entity;
+                    f1 = this.interpolateRotation(e.prevServerYaw, e.serverYaw, partialTicks);
+                    f = this.interpolateRotation(e.prevServerYaw, e.serverYaw, partialTicks);
+                }else{
+                    f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+                    f = this.interpolateRotation(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
+                }
+
                 float f2 = f1 - f;
 
                 if (this.mainModel.isRiding && entity.ridingEntity instanceof EntityLivingBase)
@@ -160,9 +171,17 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                     f2 = f1 - f;
                 }
 
-                float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+                float f8;
+                if(entity instanceof EntityPlayerSP){
+                    EntityPlayerSP e = (EntityPlayerSP)entity;
+                    f8 = e.prevServerPitch + (e.serverPitch - e.prevServerPitch) * partialTicks;
+                }else{
+                    f8 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+                }
+                
                 this.renderLivingAt(entity, x, y, z);
-                float f8 = this.handleRotationFloat(entity, partialTicks);
+                float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+                // float f8 = this.handleRotationFloat(entity, partialTicks);
                 this.rotateCorpse(entity, f8, f, partialTicks);
                 GlStateManager.enableRescaleNormal();
                 GlStateManager.scale(-1.0F, -1.0F, 1.0F);

@@ -3,6 +3,10 @@ package net.minecraft.entity;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Maps;
+
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.player.EventStrafe;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +16,7 @@ import java.util.UUID;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.BaseAttributeMap;
@@ -1566,6 +1571,13 @@ public abstract class EntityLivingBase extends Entity
      */
     protected void jump()
     {
+        float serverYaw = this.rotationYaw;
+        if(this instanceof EntityPlayerSP localPlayer){
+            EventStrafe e = new EventStrafe(localPlayer.serverYaw);
+            Xynon.INSTANCE.getEventBus().post(e);
+            serverYaw = e.getYaw();
+        }
+
         this.motionY = (double)this.getJumpUpwardsMotion();
 
         if (this.isPotionActive(Potion.jump))
@@ -1575,7 +1587,7 @@ public abstract class EntityLivingBase extends Entity
 
         if (this.isSprinting())
         {
-            float f = this.rotationYaw * 0.017453292F;
+            float f = serverYaw * 0.017453292F;
             this.motionX -= (double)(MathHelper.sin(f) * 0.2F);
             this.motionZ += (double)(MathHelper.cos(f) * 0.2F);
         }

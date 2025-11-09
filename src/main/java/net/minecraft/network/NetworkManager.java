@@ -339,7 +339,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet>
         {
             ((ITickable)this.packetListener).update();
         }
-
+        if(this.channel == null) return;
         this.channel.flush();
     }
 

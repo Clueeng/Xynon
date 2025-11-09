@@ -1,6 +1,7 @@
 package fr.flaily.xynon.utils.alts.impl;
 
 import java.io.File;
+import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.JsonObject;
 
@@ -11,20 +12,22 @@ import fr.flaily.xynon.utils.alts.CookieAltsUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Session;
 
 @Getter @Setter
 public class CookieAlt extends Alt {
     // When user adds a cookie alt file, we copy it to the client directory, so we store the path here
     private String path;
     // We'll cache the username after reading the cookie file
-    private String username = "Unknown";
     private Minecraft mc = Minecraft.getMinecraft();
 
     public CookieAlt(String path) {
         this.path = path;
+        this.username = "Unknown";
     }
 
     public CookieAlt() {
+        this.username = "Unknown";
     }
     
     @Override
@@ -38,18 +41,44 @@ public class CookieAlt extends Alt {
 
     @Override
     public void login() {
-        try {
-            File source = new File(this.path);
-            CookieAltsUtil.loginWithCookie(source.getAbsolutePath(), account -> {
-                if(account != null) {
-                    this.username = account.getUsername();
-                    mc.session.switchSession(account);
-                } else {
-                    throw new RuntimeException("Failed to login with cookie alt.");
+        // Run the whole cookie authentication asynchronously
+        CompletableFuture.runAsync(() -> {
+            try {
+                File source;
+                if(this.path == null || this.path.isEmpty()) {
+                    source = CookieAltsUtil.getCookieFile();
+                    this.path = source.getAbsolutePath();
+                }else{
+                    source = new File(this.path);
                 }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+                // Run cookie login (blocking network code)
+                CookieAltsUtil.loginWithCookie(source.getAbsolutePath(), account -> {
+                    if (account == null) {
+                        Xynon.INSTANCE.gameLogger().sendLog("Failed to login with cookie alt.");
+                        return;
+                    }
+
+                    // Handle login result safely
+                    handleSuccessfulLogin(account);
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Xynon.INSTANCE.gameLogger().sendLog("Exception while logging in with cookie alt: " + e.getMessage());
+            }
+        });
+    }
+
+    private void handleSuccessfulLogin(Session account) {
+        // Switch session on Minecraft’s thread
+
+        this.username = account.getUsername();
+        mc.session.switchSession(account);
+
+        Xynon.INSTANCE.gameLogger().sendLog("Logged in as " + this.username + " using cookie alt.");
+
+        // Avoid duplicates, then add to AltManager
+        Xynon.INSTANCE.getAltManager().addAlt(this);
     }
 }

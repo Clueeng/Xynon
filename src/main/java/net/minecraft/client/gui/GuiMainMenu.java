@@ -20,6 +20,7 @@ import org.lwjgl.util.glu.Project;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import fr.flaily.xynon.screen.main.XynonMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -235,6 +236,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options", new Object[0])));
         this.buttonList.add(new GuiButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit", new Object[0])));
         this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
+        this.buttonList.add(new GuiButton(69, this.width / 2 - 124, j + 72 + 12 + 100, "Xynon"));
+        
 
         synchronized (this.threadLock)
         {
@@ -311,6 +314,10 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
         if (button.id == 5)
         {
             this.mc.displayGuiScreen(new GuiLanguage(this, this.mc.gameSettings, this.mc.getLanguageManager()));
+        }
+        if (button.id == 69)
+        {
+            this.mc.displayGuiScreen(new XynonMenu());
         }
 
         if (button.id == 1)
@@ -582,6 +589,9 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
+        // Fuck default background
+        // override background
+        mc.displayGuiScreen(new XynonMenu());
         GlStateManager.disableAlpha();
         this.renderSkybox(mouseX, mouseY, partialTicks);
         GlStateManager.enableAlpha();

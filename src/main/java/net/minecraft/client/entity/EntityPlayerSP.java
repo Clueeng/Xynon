@@ -195,7 +195,9 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
             UpdateEvent updateEvent = new UpdateEvent(EventTime.PRE);
             Xynon.INSTANCE.getEventBus().post(updateEvent);
+
             super.onUpdate();
+
             updateEvent.time = EventTime.POST;
             Xynon.INSTANCE.getEventBus().post(updateEvent);
 
@@ -299,8 +301,8 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
             if (flag3)
             {
-                this.lastReportedYaw = this.rotationYaw;
-                this.lastReportedPitch = this.rotationPitch;
+                this.lastReportedYaw = serverYaw;
+                this.lastReportedPitch = serverPitch;
             }
 
             this.lastReportedOnGround = event.isOnGround();
