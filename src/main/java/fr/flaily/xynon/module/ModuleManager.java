@@ -6,6 +6,7 @@ import fr.flaily.xynon.module.impl.combat.Killaura;
 import fr.flaily.xynon.module.impl.movement.Flight;
 import fr.flaily.xynon.module.impl.player.Noslow;
 import fr.flaily.xynon.module.impl.player.Sprint;
+import fr.flaily.xynon.module.impl.render.Animations;
 import fr.flaily.xynon.module.impl.render.ClickGUI;
 import fr.flaily.xynon.module.impl.render.HUD;
 import fr.flaily.xynon.utils.font.CustomFontRenderer;
@@ -35,6 +36,7 @@ public class ModuleManager {
         register(new Killaura());
         register(new Noslow());
         register(new Sprint());
+        register(new Animations());
 
         Xynon.INSTANCE.debugLogger().sendLog("Finished registering modules");
     }

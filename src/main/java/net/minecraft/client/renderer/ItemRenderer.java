@@ -32,6 +32,10 @@ import net.optifine.reflect.Reflector;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
 
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.render.RenderedItemEvent;
+import fr.flaily.xynon.module.impl.render.Animations;
+
 public class ItemRenderer
 {
     private static final ResourceLocation RES_MAP_BACKGROUND = new ResourceLocation("textures/map/map_background.png");
@@ -400,10 +404,17 @@ public class ItemRenderer
                             this.transformFirstPersonItem(f, 0.0F);
                             break;
 
-                        case BLOCK:
-                            this.transformFirstPersonItem(f, 0.0F);
-                            this.doBlockTransformations();
+                        case BLOCK:{
+                            Animations animations = Xynon.INSTANCE.getModuleManager().getModule(Animations.class);
+                            if(animations.isToggled()) {
+                                RenderedItemEvent event = new RenderedItemEvent(f, f1);
+                                Xynon.INSTANCE.getEventBus().post(event);
+                            }else {
+                                this.transformFirstPersonItem(f, 0.0F);
+                                this.doBlockTransformations();
+                            }
                             break;
+                        }
 
                         case BOW:
                             this.transformFirstPersonItem(f, 0.0F);

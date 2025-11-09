@@ -6,6 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FeatureInfo {
     String name();
-    int key();
+    int key() default -1;
     Module.Category category();
 }

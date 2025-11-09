@@ -38,7 +38,7 @@ public interface SettingInitializer {
     }
 
     default MultiSelectSetting multi(String name, List<String> options, List<String> defaultValues, Supplier<Boolean> supplier) {
-        MultiSelectSetting setting = new MultiSelectSetting(name, defaultValues, supplier, defaultValues.toArray(new String[0]));
+        MultiSelectSetting setting = new MultiSelectSetting(name, defaultValues, supplier, options.toArray(new String[0]));
         add(setting);
         return setting;
     }

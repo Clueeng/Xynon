@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class HUD extends Module implements Render {
 
     public MultiSelectSetting components = multi(
-            "Components", Arrays.asList(), Arrays.asList("ArrayList", "Watermark"), () -> true
+            "Components", Arrays.asList("ArrayList", "Watermark"), Arrays.asList("ArrayList", "Watermark"), () -> true
     );
 
     public ModeSetting hudColorMode = mode("Color mode", "Single", () -> true, "Single", "Double", "Astolfo");

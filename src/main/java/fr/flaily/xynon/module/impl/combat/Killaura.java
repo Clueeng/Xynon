@@ -1,15 +1,11 @@
 package fr.flaily.xynon.module.impl.combat;
 
-import java.awt.List;
 import java.util.Arrays;
 import java.util.Comparator;
 
 import org.lwjgl.input.Keyboard;
 
-import com.google.common.collect.Lists;
-
 import best.azura.eventbus.handler.EventHandler;
-import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.EventTime;
 import fr.flaily.xynon.events.player.MotionEvent;
 import fr.flaily.xynon.events.player.RotationEvent;
@@ -27,6 +23,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -68,9 +65,10 @@ public class Killaura extends Module {
     @EventHandler
     public void applyTarget(UpdateEvent event) {
         java.util.List<Entity> test = WorldUtils.getEntities(e -> {
-            return !(e instanceof EntityPlayerSP) &&
-            (e instanceof EntityPlayer && allowedEntities.isSelected("Players")) &&
-            ((e instanceof EntityMob || e instanceof EntityVillager) && allowedEntities.isSelected("Mobs")) 
+            return !(e instanceof EntityPlayerSP) && e.isEntityAlive() &&
+            ((e instanceof EntityLivingBase) && ((EntityLivingBase)e).getHealth() >= 0.0f) &&
+            ((e instanceof EntityPlayer && allowedEntities.isSelected("Player")) ||
+            ((e instanceof EntityMob || e instanceof EntityVillager || e instanceof EntityAnimal) && allowedEntities.isSelected("Mobs")))
             && e.getDistanceToEntity(mc.thePlayer) < range.maximum;
         });
         test.sort(Comparator.comparingDouble(e -> e.getDistanceToEntity(mc.thePlayer)));

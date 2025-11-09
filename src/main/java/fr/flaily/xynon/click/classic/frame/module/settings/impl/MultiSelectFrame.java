@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 public class MultiSelectFrame extends SettingFrame<MultiSelectSetting> implements SettingStyle {
     // Animation
     public AnimFloat expandAnim = new AnimFloat(0.0f, 0.07f, AnimFloat.Easing.EASE_IN_OUT);
-    private boolean expanded = true;
+    private boolean expanded = false;
 
     public MultiSelectFrame(ModuleFrame parentFrame, MultiSelectSetting setting, int relY) {
         this.setting = setting;

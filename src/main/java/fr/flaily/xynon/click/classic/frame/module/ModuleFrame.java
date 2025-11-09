@@ -69,6 +69,9 @@ public class ModuleFrame implements ModuleStyle {
         float settingHeight = 0;
         if(settingAnim.getValue() > 0.01f) {
             for(SettingFrame<?> frame : settingFrames) {
+                Setting setting = ((Setting<?>) frame.setting);
+                if(!setting.canShow()) continue;
+
                 settingHeight += frame.height();
             }
         }
@@ -76,28 +79,16 @@ public class ModuleFrame implements ModuleStyle {
     }
 
     public void render(int mouseX, int mouseY, float partialTicks, float scroll) {
-
-//        for(Setting<?> setting : parent.getSettings()) {
-//            if (setting instanceof BooleanSetting)
-//                settingFrames.add(new BooleanFrame(this, (BooleanSetting) setting, offset));
-//            else if (setting instanceof NumberSetting)
-//                settingFrames.add(new NumberFrame(this, (NumberSetting) setting, offset));
-//            else if (setting instanceof ColorSetting)
-//                settingFrames.add(new ColorPickerFrame(this, (ColorSetting) setting, offset));
-//            else if (setting instanceof ModeSetting)
-//                settingFrames.add(new ModeFrame(this, (ModeSetting) setting, offset));
-//            else if(setting instanceof MultiSelectSetting)
-//                settingFrames.add(new MultiSelectFrame(this, (MultiSelectSetting) setting, offset));
-//
-//
-//            offset += settingFrames.get(settingFrames.size()-1).height();
-//        }
         int offset = baseHeight;
-        for(SettingFrame frame : settingFrames) {
+        for (SettingFrame<?> frame : settingFrames) {
+            Setting setting = ((Setting<?>) frame.setting);
+            if (!setting.canShow()){
+                continue;
+            }
+
             frame.relY = offset;
             offset += frame.height();
         }
-
         settingAnim.update(partialTicks);
         float settingScale = settingAnim.getValue();
 

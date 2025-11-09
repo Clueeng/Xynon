@@ -3,6 +3,10 @@ package net.minecraft.item;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.player.ItemHitEntityEvent;
+
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Random;
@@ -374,6 +378,9 @@ public final class ItemStack
      */
     public void hitEntity(EntityLivingBase entityIn, EntityPlayer playerIn)
     {
+        ItemHitEntityEvent event = new ItemHitEntityEvent();
+        Xynon.INSTANCE.getEventBus().post(event);
+        if(event.isCancelled()) return;
         boolean flag = this.item.hitEntity(this, entityIn, playerIn);
 
         if (flag)
