@@ -67,7 +67,7 @@ public class Killaura extends Module {
         java.util.List<Entity> test = WorldUtils.getEntities(e -> {
             return !(e instanceof EntityPlayerSP) && e.isEntityAlive() &&
             ((e instanceof EntityLivingBase) && ((EntityLivingBase)e).getHealth() >= 0.0f) &&
-            ((e instanceof EntityPlayer && allowedEntities.isSelected("Player")) ||
+            ((e instanceof EntityPlayer && allowedEntities.isSelected("Players")) ||
             ((e instanceof EntityMob || e instanceof EntityVillager || e instanceof EntityAnimal) && allowedEntities.isSelected("Mobs")))
             && e.getDistanceToEntity(mc.thePlayer) < range.maximum;
         });

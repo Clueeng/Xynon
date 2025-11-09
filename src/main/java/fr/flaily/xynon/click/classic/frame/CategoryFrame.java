@@ -58,6 +58,7 @@ public class CategoryFrame implements CategoryStyle {
         anim.setValue(0.04f);
         anim.setTarget(1f);
         anim.setSpeed(0.04f);
+        moduleFrames.forEach(m -> m.init());
     }
 
     public void startClosing() {

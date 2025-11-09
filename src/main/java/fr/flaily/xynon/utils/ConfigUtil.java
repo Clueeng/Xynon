@@ -149,13 +149,13 @@ public class ConfigUtil {
             } else if (setting instanceof RangeSetting range) {
                 range.setValue(valueElement.getAsDouble());
             } else if (setting instanceof ModeSetting mode) {
-                 String saved = valueElement.getAsString();
+                String saved = valueElement.getAsString();
                 mode.setValue(saved);
 
                 for (int i = 0; i < mode.modes.length; i++) {
                     if (mode.modes[i].equalsIgnoreCase(saved)) {
                         mode.current = i;
-                        mode.oldCurrent = i;
+                        System.out.println("FOUND THE MODE " + mode.modes[mode.current]);
                         break;
                     }
                 }
@@ -180,7 +180,6 @@ public class ConfigUtil {
                     selections.add(e.getAsString());
                 multi.setSelectedOptions(selections);
             } else {
-                // Fallback for any unrecognized type
                 Object current = setting.getValue();
                 Object parsed = null;
 

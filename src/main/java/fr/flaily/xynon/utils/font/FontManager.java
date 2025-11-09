@@ -11,6 +11,7 @@ public class FontManager {
 
         // Add fonts here
         fonts.put("funnel", new CustomFont("Funnel.ttf"));
+        fonts.put("inter", new CustomFont("Inter.ttf"));
     }
 
     public CustomFont getFunnel() {
@@ -19,6 +20,13 @@ public class FontManager {
             return null;
         }
         return fonts.get("funnel");
+    }
+    public CustomFont getInter() {
+        if(!fonts.containsKey("inter")) {
+            System.out.println("Font not found");
+            return null;
+        }
+        return fonts.get("inter");
     }
 
 }

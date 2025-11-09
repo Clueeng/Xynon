@@ -19,6 +19,9 @@ public abstract class SettingFrame<T> implements SettingStyle {
     public abstract void render(int mouseX, int mouseY, float partialTicks);
     public abstract void mouseClicked(int mouseX, int mouseY, int mouseButton);
     public abstract void mouseReleased(int mouseX, int mouseY, int mouseButton);
+    public void init() {
+        
+    }
 
     // Helper
     public void setPosition(int x, int y) {

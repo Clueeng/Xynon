@@ -35,12 +35,17 @@ public class ModeFrame extends SettingFrame<ModeSetting> implements SettingStyle
     }
 
     @Override
+    public void init() {
+        int nbSettings = (this.setting.modes.length - 1);
+        this.anim.setTarget((float) setting.current / nbSettings);
+    }
+
+    @Override
     public void render(int mouseX, int mouseY, float partialTicks) {
         anim.update(partialTicks);
         int nbSettings = (this.setting.modes.length - 1);
 
         setting.onValueUpdate(() -> {
-//            Xynon.INSTANCE.gameLogger().sendLog("Current: " + setting.current);
             this.anim.setTarget((float) setting.current / nbSettings);
         });
 

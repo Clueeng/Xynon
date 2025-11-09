@@ -59,11 +59,11 @@ public class HUD extends Module implements Render {
 
         float xPos = event.getSr().getScaledWidth() - padding;
         float yPos = 0.0f + padding;
-        float height = bigger.getHeight("B") + 1.0f + lineHeight;
+        float height = big.getHeight("B") + 1.0f + lineHeight;
 
         int index = 0;
         ArrayList<Module> test = Xynon.INSTANCE.getModuleManager().modules;
-        ArrayList<Module> sort = Xynon.INSTANCE.getModuleManager().lengthSortedModules(bigger, test);
+        ArrayList<Module> sort = Xynon.INSTANCE.getModuleManager().lengthSortedModules(big, test);
 
         Module lastModule;
         for(Module module : sort) {
@@ -71,12 +71,12 @@ public class HUD extends Module implements Render {
             float anim = module.getModAnimation().getValue();
 
             this.hudColor = getColor(index);
-            float modLength = bigger.getWidth(module.getListName()) * anim;
+            float modLength = big.getWidth(module.getListName()) * anim;
             float moduleX = xPos - modLength;
 
             Gui.drawRect(moduleX - margin, yPos, moduleX + modLength, yPos + (height) * anim,
                     new Color(0, 0, 0, 110).getRGB());
-            bigger.drawStringWithShadow(module.getListName(), moduleX - (margin / 2), yPos + (lineHeight / 2f), this.hudColor);
+            big.drawStringWithShadow(module.getListName(), moduleX - (margin / 2), yPos + (lineHeight / 2f), this.hudColor);
 
             Gui.drawRect(moduleX - margin - 1, yPos, moduleX - margin, yPos + (height) * anim,
                     this.hudColor);

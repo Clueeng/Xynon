@@ -151,4 +151,10 @@ public class ModuleFrame implements ModuleStyle {
             settingFrames.forEach(s -> s.mouseReleased(mouseX, mouseY, state));
         }
     }
+
+    public void init() {
+        if(showSettings) {
+            settingFrames.forEach(s -> s.init());
+        }
+    }
 }
