@@ -1,9 +1,8 @@
 package fr.flaily.xynon.screen.alts;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import org.lwjgl.util.Color;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.screen.main.XynonTextField;
@@ -139,27 +138,64 @@ public class GuiAltManager extends GuiScreen {
     public XynonTextField usernameField;
 
     private void reloadAlts() {
-        System.out.println("reloadAlts called");
+        ScaledResolution sr = new ScaledResolution(mc);
+        // System.out.println("reloadAlts called");
+
         Xynon.INSTANCE.getAltManager().loadAltsFromFile();
+
+        this.alts.clear();
         this.alts = new ArrayList<>(Xynon.INSTANCE.getAltManager().getAlts());
+
+        this.renderedAlts.clear();
+
+        for(Alt alt : this.alts) {
+            this.renderedAlts.add(new RenderedAlt(alt, 
+            (int) ((sr.getScaledWidth() / 2f) - 150), 100 + this.renderedAlts.size() * 60, 300, 50));
+        }
     }
+
+    private String getAltStatus(Alt alt) {
+        switch (alt.status) {
+            case WAITING:
+                return "Waiting for authentication...";
+            case LOGGING_IN:
+                return "Logging in...";
+            case SUCCESS:
+                return "Login successful!";
+            case FAILED:
+                return "Login failed.";
+            default:
+                return "Idle";
+        }
+    }
+
+    private int getAltStatusColor(Alt alt) {
+        switch (alt.status) {
+            case WAITING:
+                return new java.awt.Color(255, 255, 0).getRGB(); // Yellow
+            case LOGGING_IN:
+                return new Color(0, 0, 255).getRGB(); // Blue
+            case SUCCESS:
+                return new Color(0, 255, 0).getRGB(); // Green
+            case FAILED:
+                return new Color(255, 0, 0).getRGB(); // Red
+            default:
+                return new Color(255, 255, 255).getRGB(); // White
+        }
+    }
+    private RenderedAlt selectedAlt = null;
 
     public GuiAltManager() {
         // Load alts from file or other source
         reloadAlts();
         ScaledResolution sr = new ScaledResolution(mc);
 
-        for(Alt alt : this.alts) {
-            this.renderedAlts.add(new RenderedAlt(alt, 
-            (int) ((sr.getScaledWidth() / 2f) - 150), 100 + this.renderedAlts.size() * 60, 300, 50));
-        }
-
 
         int posX = 94;
         int posY = sr.getScaledHeight() / 2 + 32;
         System.out.println(posY);
         int buttonWidth = 72;
-        this.usernameField = new XynonTextField(posX, posY - 60, buttonWidth * 2 + 10, 24);
+        this.usernameField = new XynonTextField(posX, posY - 105, buttonWidth * 2 + 10, 24);
         String[] buttons = {"MSA", "Cookie", "Cracked"};
         int id = 0;
         for (String buttonLabel : buttons) {
@@ -198,6 +234,7 @@ public class GuiAltManager extends GuiScreen {
             button.render(mouseX, mouseY, partialTicks);
         }
         medium.drawCenteredString("Add Alt", posX + 78, posY - 14, -1);
+        small.drawStringWithShadow("Crack Name", posX + 4, posY + 14, -1);
         usernameField.render();
 
 
@@ -210,6 +247,16 @@ public class GuiAltManager extends GuiScreen {
             medium.drawCenteredString("No alts", (sr.getScaledWidth() / 2f), 90, -1);
         }else{
             medium.drawCenteredString("Alts (" + this.alts.size() + ")", (sr.getScaledWidth() / 2f), 90, -1);
+        }
+
+        // Status bar
+        if(this.selectedAlt != null) {
+            // System.out.println(selectedAlt.alt.username + " : " + selectedAlt.alt.status);
+            Alt alt = this.selectedAlt.alt;
+            String status = getAltStatus(alt);
+            int statusColor = getAltStatusColor(alt);
+            small.drawCenteredString(alt.getUsername() + " - " + status,
+             sr.getScaledWidth() / 2f, sr.getScaledHeight() - 30, statusColor);
         }
 
         // Right side panel (Current alt info, later)
@@ -256,6 +303,9 @@ public class GuiAltManager extends GuiScreen {
             }
         }
         for(RenderedAlt renderedAlt : renderedAlts) {
+            if(renderedAlt.isHovered(mouseX, mouseY)) {
+                selectedAlt = renderedAlt;
+            }
             renderedAlt.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }

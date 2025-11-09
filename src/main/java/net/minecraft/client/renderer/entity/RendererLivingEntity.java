@@ -180,7 +180,15 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                 }
                 
                 this.renderLivingAt(entity, x, y, z);
-                float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+
+                float f7;
+                if(entity instanceof EntityPlayerSP){
+                    EntityPlayerSP e = (EntityPlayerSP)entity;
+                    f7 = e.prevServerPitch + (e.serverPitch - e.prevServerPitch) * partialTicks;
+                }else{
+                    f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
+                }
+                
                 // float f8 = this.handleRotationFloat(entity, partialTicks);
                 this.rotateCorpse(entity, f8, f, partialTicks);
                 GlStateManager.enableRescaleNormal();

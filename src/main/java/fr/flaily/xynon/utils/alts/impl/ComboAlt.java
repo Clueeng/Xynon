@@ -7,6 +7,7 @@ import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.utils.alts.Alt;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
 
 public class ComboAlt extends Alt {
     @Setter @Getter
@@ -16,6 +17,11 @@ public class ComboAlt extends Alt {
         this.email = email;
         this.password = password;
         this.username = email;
+    }
+    public ComboAlt(String username) {
+        this.email = username;
+        this.username = username;
+        this.password = "";
     }
     public ComboAlt() {
         this.email = "";
@@ -41,6 +47,14 @@ public class ComboAlt extends Alt {
 
     @Override
     public void login() {
+        Minecraft mc = Minecraft.getMinecraft();
+        if(this.isCracked()) {
+            mc.session = new net.minecraft.util.Session(this.username, "", "", "mojang");
+            this.status = Status.SUCCESS;
+            Xynon.INSTANCE.gameLogger().sendLog("Logged in with cracked alt: " + this.username);
+            // return;
+        }
+        
         if(!Xynon.INSTANCE.getAltManager().alreadyIn(this)) {
             Xynon.INSTANCE.getAltManager().addAlt(this);
         }

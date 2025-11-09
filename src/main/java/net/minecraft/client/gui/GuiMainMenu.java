@@ -591,7 +591,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback
     {
         // Fuck default background
         // override background
-        mc.displayGuiScreen(new XynonMenu());
+        // mc.displayGuiScreen(new XynonMenu());
         GlStateManager.disableAlpha();
         this.renderSkybox(mouseX, mouseY, partialTicks);
         GlStateManager.enableAlpha();

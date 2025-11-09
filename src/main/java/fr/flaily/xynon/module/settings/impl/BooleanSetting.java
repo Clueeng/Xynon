@@ -18,6 +18,13 @@ public class BooleanSetting extends Setting<Boolean> {
         this.value = value;
     }
 
+    public boolean isToggled() {
+        return value;
+    }
+    public Boolean isValue() {
+        return value;
+    }
+
     private boolean value;
 
     public void toggle() {

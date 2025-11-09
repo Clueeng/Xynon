@@ -75,9 +75,6 @@ public class AltManager {
         String content = FileUtils.readFile(altFile);
         ArrayList<Alt> loadedAlts = parseAltsFromJson(content);
         this.alts.clear();
-        loadedAlts.forEach(a -> {
-            System.out.println(a.toJson());
-        });
         this.alts.addAll(loadedAlts);
     }
     private ArrayList<Alt> parseAltsFromJson(String content) {

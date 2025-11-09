@@ -6,7 +6,7 @@ import fr.flaily.xynon.module.Module;
 import org.lwjgl.input.Keyboard;
 
 @FeatureInfo(name = "ClickGUI", key = Keyboard.KEY_RSHIFT, category = Module.Category.Render)
-public class ClickGUIModule extends Module {
+public class ClickGUI extends Module {
     private ClassicGUI classicGUI;
 
     @Override

@@ -1,10 +1,15 @@
 package net.minecraft.client.entity;
 
+import java.util.Arrays;
+
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.command.Command;
 import fr.flaily.xynon.events.EventTime;
 import fr.flaily.xynon.events.player.MotionEvent;
 import fr.flaily.xynon.events.player.RotationEvent;
 import fr.flaily.xynon.events.player.UpdateEvent;
+import fr.flaily.xynon.module.impl.player.Noslow;
+import fr.flaily.xynon.module.impl.player.Sprint;
 import fr.flaily.xynon.utils.MathHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSoundMinecartRiding;
@@ -55,6 +60,7 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 
@@ -334,6 +340,19 @@ public class EntityPlayerSP extends AbstractClientPlayer
      */
     public void sendChatMessage(String message)
     {
+        char commandPrefix = '-';
+        if (message.startsWith(String.valueOf(commandPrefix))) {
+            String[] commandArgs = message.split(" ");
+            String commandName = commandArgs[0].substring(1); // remove '-'
+            Command command = Xynon.INSTANCE.getCommandManager().getCommand(commandName);
+
+            if (command != null) {
+                // Remove the first argument (-CommandName)
+                String[] args = Arrays.copyOfRange(commandArgs, 1, commandArgs.length);
+                command.execute(args);
+            }
+            return;
+        }
         this.sendQueue.addToSendQueue(new C01PacketChatMessage(message));
     }
 
@@ -824,7 +843,9 @@ public class EntityPlayerSP extends AbstractClientPlayer
         boolean flag2 = this.movementInput.moveForward >= f;
         this.movementInput.updatePlayerMoveState();
 
-        if (this.isUsingItem() && !this.isRiding())
+        Noslow noslow = Xynon.INSTANCE.getModuleManager().getModule(Noslow.class);
+
+        if ((this.isUsingItem() && !this.isRiding()) && !noslow.isToggled())
         {
             this.movementInput.moveStrafe *= 0.2F;
             this.movementInput.moveForward *= 0.2F;
@@ -836,8 +857,12 @@ public class EntityPlayerSP extends AbstractClientPlayer
         this.pushOutOfBlocks(this.posX + (double)this.width * 0.35D, this.getEntityBoundingBox().minY + 0.5D, this.posZ - (double)this.width * 0.35D);
         this.pushOutOfBlocks(this.posX + (double)this.width * 0.35D, this.getEntityBoundingBox().minY + 0.5D, this.posZ + (double)this.width * 0.35D);
         boolean flag3 = (float)this.getFoodStats().getFoodLevel() > 6.0F || this.capabilities.allowFlying;
+        
+        boolean flag4 = this.onGround && !flag1 && !flag2 && this.movementInput.moveForward >= f && !this.isSprinting() 
+        && flag3 && (!this.isUsingItem() || noslow.isToggled()) && !this.isPotionActive(Potion.blindness);
+       
 
-        if (this.onGround && !flag1 && !flag2 && this.movementInput.moveForward >= f && !this.isSprinting() && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness))
+        if (flag4)
         {
             if (this.sprintToggleTimer <= 0 && !this.mc.gameSettings.keyBindSprint.isKeyDown())
             {
@@ -848,13 +873,16 @@ public class EntityPlayerSP extends AbstractClientPlayer
                 this.setSprinting(true);
             }
         }
+        
+        Sprint sprint = Xynon.INSTANCE.getModuleManager().getModule(Sprint.class);
+        boolean spBypass = sprint.omni.isToggled() && sprint.isToggled();
 
-        if (!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && !this.isUsingItem() && !this.isPotionActive(Potion.blindness) && this.mc.gameSettings.keyBindSprint.isKeyDown())
+        if (!this.isSprinting() && this.movementInput.moveForward >= f && flag3 && (!this.isUsingItem() || noslow.isToggled()) && !this.isPotionActive(Potion.blindness) && this.mc.gameSettings.keyBindSprint.isKeyDown())
         {
             this.setSprinting(true);
         }
 
-        if (this.isSprinting() && (this.movementInput.moveForward < f || this.isCollidedHorizontally || !flag3))
+        if (this.isSprinting() && ((this.movementInput.moveForward < f || this.isCollidedHorizontally || !flag3) && !spBypass))
         {
             this.setSprinting(false);
         }
@@ -944,6 +972,28 @@ public class EntityPlayerSP extends AbstractClientPlayer
         {
             this.capabilities.isFlying = false;
             this.sendPlayerAbilities();
+        }
+    }
+
+    @Override
+    public Vec3 getLookVec() {
+        // float f = this.prevServerPitch + (this.serverPitch - this.prevServerPitch) * 1.0F;
+        // float f1 = this.prevServerYaw + (this.serverYaw - this.prevServerYaw) * 1.0F;
+        // return this.getVectorForRotation(f, f1);
+        return super.getLookVec();
+    }
+
+    @Override
+    public Vec3 getLook(float partialTicks) {
+        if (partialTicks == 1.0F)
+        {
+            return this.getVectorForRotation(this.serverPitch, this.serverYaw);
+        }
+        else
+        {
+            float f = this.prevServerPitch + (this.serverPitch - this.prevServerPitch) * partialTicks;
+            float f1 = this.prevServerYaw + (this.serverYaw - this.prevServerYaw) * partialTicks;
+            return this.getVectorForRotation(f, f1);
         }
     }
 }

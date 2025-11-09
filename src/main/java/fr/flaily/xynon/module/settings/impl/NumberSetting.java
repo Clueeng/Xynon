@@ -25,6 +25,10 @@ public class NumberSetting extends Setting<Double> {
 
     public void setValue(double value) {
         double s = step;
+        if(s == 0.0) {
+            this.value = value;
+            return;
+        }
         double v = value;
         double r;
         r = s * Math.round(v / s);

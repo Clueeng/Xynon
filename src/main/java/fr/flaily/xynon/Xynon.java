@@ -1,6 +1,7 @@
 package fr.flaily.xynon;
 
 import best.azura.eventbus.core.EventBus;
+import fr.flaily.xynon.command.CommandManager;
 import fr.flaily.xynon.module.ModuleManager;
 import fr.flaily.xynon.utils.alts.AltManager;
 import fr.flaily.xynon.utils.font.FontManager;
@@ -26,6 +27,7 @@ public enum Xynon {
     public final FontManager fontManager = new FontManager();
     public ModuleManager moduleManager;
     public AltManager altManager;
+    public CommandManager commandManager;
 
     public void start() {
         getLoggerManager().init();
@@ -37,6 +39,7 @@ public enum Xynon {
 
         moduleManager = new ModuleManager();
         altManager = new AltManager();
+        commandManager = new CommandManager();
     }
 
     public void stop() {

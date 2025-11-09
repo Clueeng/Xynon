@@ -39,7 +39,7 @@ public class TestModule extends Module {
 
     @EventHandler
     public void onRotate(RotationEvent event) {
-        event.setYaw(event.getYaw() + 90.0f);
+        event.setYaw(event.getYaw() + (mc.thePlayer.ticksExisted % 360));
     }
 
     @EventHandler

@@ -29,6 +29,10 @@ public class RangeSetting extends Setting<Double> {
 
     public void setValueMin(double value) {
         double s = step;
+        if(s == 0) {
+            valueMin = value;
+            return; 
+        }
         double v = value;
         double r;
         r = s * Math.round(v / s);
@@ -37,6 +41,11 @@ public class RangeSetting extends Setting<Double> {
 
     public void setValueMax(double value) {
         double s = step;
+        if(s == 0) {
+            valueMax = value;
+            return; 
+        }
+
         double v = value;
         double r;
         r = s * Math.round(v / s);

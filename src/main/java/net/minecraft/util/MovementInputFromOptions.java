@@ -1,5 +1,7 @@
 package net.minecraft.util;
 
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.game.EventMoveInput;
 import net.minecraft.client.settings.GameSettings;
 
 public class MovementInputFromOptions extends MovementInput
@@ -44,5 +46,13 @@ public class MovementInputFromOptions extends MovementInput
             this.moveStrafe = (float)((double)this.moveStrafe * 0.3D);
             this.moveForward = (float)((double)this.moveForward * 0.3D);
         }
+
+        EventMoveInput eventMoveInput = new EventMoveInput(sneak, jump, moveForward, moveStrafe);
+        Xynon.INSTANCE.getEventBus().post(eventMoveInput);
+
+        this.sneak = eventMoveInput.sneak;
+        this.jump = eventMoveInput.jump;
+        this.moveForward = eventMoveInput.forward;
+        this.moveStrafe = eventMoveInput.sideways;
     }
 }

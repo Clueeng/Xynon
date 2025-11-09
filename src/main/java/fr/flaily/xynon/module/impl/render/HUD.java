@@ -8,7 +8,6 @@ import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.impl.ColorSetting;
 import fr.flaily.xynon.module.settings.impl.ModeSetting;
 import fr.flaily.xynon.module.settings.impl.MultiSelectSetting;
-import fr.flaily.xynon.utils.font.CustomFontRenderer;
 import fr.flaily.xynon.utils.render.ColorUtils;
 import net.minecraft.client.gui.Gui;
 
@@ -17,8 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @FeatureInfo(name = "HUD", key = -1, category = Module.Category.Render)
-public class HUDModule extends Module {
-    private CustomFontRenderer font = Xynon.INSTANCE.getFontManager().getFunnel().size(20);
+public class HUD extends Module implements Render {
 
     public MultiSelectSetting components = multi(
             "Components", Arrays.asList(), Arrays.asList("ArrayList", "Watermark"), () -> true
@@ -61,26 +59,24 @@ public class HUDModule extends Module {
 
         float xPos = event.getSr().getScaledWidth() - padding;
         float yPos = 0.0f + padding;
-        float height = font.getHeight("B") + 1.0f + lineHeight;
+        float height = bigger.getHeight("B") + 1.0f + lineHeight;
 
         int index = 0;
         ArrayList<Module> test = Xynon.INSTANCE.getModuleManager().modules;
-        ArrayList<Module> sort = Xynon.INSTANCE.getModuleManager().lengthSortedModules(font, test);
+        ArrayList<Module> sort = Xynon.INSTANCE.getModuleManager().lengthSortedModules(bigger, test);
 
-        // TODO: Replace this later for animations
         Module lastModule;
         for(Module module : sort) {
             if(module.getModAnimation().getValue() < 0.01f) continue;
             float anim = module.getModAnimation().getValue();
-            // System.out.println(module.getModAnimation().getValue());
 
             this.hudColor = getColor(index);
-            float modLength = font.getWidth(module.getListName()) * anim;
+            float modLength = bigger.getWidth(module.getListName()) * anim;
             float moduleX = xPos - modLength;
 
             Gui.drawRect(moduleX - margin, yPos, moduleX + modLength, yPos + (height) * anim,
                     new Color(0, 0, 0, 110).getRGB());
-            font.drawStringWithShadow(module.getListName(), moduleX - (margin / 2), yPos + (lineHeight / 2f), this.hudColor);
+            bigger.drawStringWithShadow(module.getListName(), moduleX - (margin / 2), yPos + (lineHeight / 2f), this.hudColor);
 
             Gui.drawRect(moduleX - margin - 1, yPos, moduleX - margin, yPos + (height) * anim,
                     this.hudColor);

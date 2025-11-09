@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.utils.AnimFloat;
 import fr.flaily.xynon.utils.font.CustomFontRenderer;
+import fr.flaily.xynon.utils.render.RenderUtil;
 import net.minecraft.client.gui.Gui;
 
 public class XynonButton {
@@ -45,8 +46,9 @@ public class XynonButton {
         GL11.glScalef(scaleFactor, scaleFactor, 1);
         GL11.glTranslatef(-(x + width / 2f), -(y + height / 3f), 0);
 
-        Gui.drawRect(x, y, x + width, y + height, backgroundColor);
-        font.drawCenteredString(text, x + width / 2f, 5 +y + (height - font.getHeight("A")) / 2f, -1);
+        RenderUtil.drawRoundedRect(x, y, width, height, 5f, backgroundColor);
+
+        font.drawCenteredString(text, x + width / 2f, 6 + y + (height - font.getHeight("A")) / 2f, -1);
 
         GL11.glPopMatrix();
     }

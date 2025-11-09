@@ -1,23 +1,19 @@
 package fr.flaily.xynon.module;
 
-import best.azura.eventbus.handler.EventHandler;
 import fr.flaily.xynon.Xynon;
-import fr.flaily.xynon.events.render.ScreenEvent;
 import fr.flaily.xynon.module.settings.Setting;
-import fr.flaily.xynon.module.settings.impl.*;
 import fr.flaily.xynon.utils.AnimFloat;
+import fr.flaily.xynon.utils.Utils;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
 
 @Getter
-public class Module {
+public class Module implements SettingInitializer, Utils {
     public enum Category {
         Combat,
         Render,
+        Player,
         Movement;
     }
 
@@ -28,6 +24,15 @@ public class Module {
     // Used for per-module animations in scenarios we do not have a separate class like ModuleFrame
     // I don't think it'd be great to have a new class just holding a module and a float
     public AnimFloat modAnimation = new AnimFloat(0.0f, 0.07f, AnimFloat.Easing.EASE_IN_OUT);
+
+
+    // ------------------ Settings --------------------- //
+    private ArrayList<Setting<?>> settings = new ArrayList<>();
+
+    @Override
+    public ArrayList<Setting<?>> getSettings() {
+        return settings;
+    }
 
     public String getDisplayName() {
         return name;
@@ -74,66 +79,4 @@ public class Module {
         return getDisplayName();
     }
 
-    public Minecraft mc = Minecraft.getMinecraft();
-
-
-
-    // ------------------ Settings --------------------- //
-    private ArrayList<Setting<?>> settings = new ArrayList<>();
-
-    public void add(Setting<?> setting) {
-        this.settings.add(setting);
-    }
-
-    public BooleanSetting bool(String name, boolean value, Supplier<Boolean> supplier) {
-        BooleanSetting set = new BooleanSetting(name, value, supplier);
-        add(set);
-        return set;
-    }
-    public NumberSetting num(String name, double min, double max, double val, Supplier<Boolean> supplier) {
-        NumberSetting num = new NumberSetting(name, min, max, val, supplier);
-        add(num);
-        return num;
-    }
-    public NumberSetting num(String name, double min, double max, double val, double step, Supplier<Boolean> supplier) {
-        NumberSetting num = new NumberSetting(name, min, max, val, step, supplier);
-        add(num);
-        return num;
-    }
-    public MultiSelectSetting multi(String name, List<String> options, List<String> defaultValues, Supplier<Boolean> supplier) {
-        MultiSelectSetting setting = new MultiSelectSetting(name, defaultValues, supplier, defaultValues.toArray(new String[0]));
-        add(setting);
-        return setting;
-    }
-    public ColorSetting color(String name, float a, float b, float c, int alpha) {
-        ColorSetting colorSetting = new ColorSetting(name, a, b, c, alpha);
-        add(colorSetting);
-        return colorSetting;
-    }
-    public ColorSetting color(String name, float a, float b, float c, int alpha, Supplier<Boolean> supplier) {
-        ColorSetting colorSetting = new ColorSetting(name, a, b, c, alpha, supplier);
-        add(colorSetting);
-        return colorSetting;
-    }
-    public ModeSetting mode(String name, String value, String... modes) {
-        ModeSetting modeSetting = new ModeSetting(name, value, () -> true, modes);
-        add(modeSetting);
-        return modeSetting;
-    }
-    public ModeSetting mode(String name, String value, Supplier<Boolean> supplier, String... modes) {
-        ModeSetting modeSetting = new ModeSetting(name, value, supplier, modes);
-        add(modeSetting);
-        return modeSetting;
-    }
-    public RangeSetting range(String name, double min, double max, double valueMin, double valueMax, Supplier<Boolean> supplier) {
-        RangeSetting rangeSetting = new RangeSetting(name, min, max, valueMin, valueMax, supplier);
-        add(rangeSetting);
-        return rangeSetting;
-    }
-    public RangeSetting range(String name, double min, double max, double valueMin, double
-            valueMax, double step, Supplier<Boolean> supplier) {
-        RangeSetting rangeSetting = new RangeSetting(name, min, max, valueMin, valueMax, step, supplier);
-        add(rangeSetting);
-        return rangeSetting;
-    }
 }

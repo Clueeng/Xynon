@@ -2,9 +2,12 @@ package fr.flaily.xynon.module;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.module.impl.TestModule;
-import fr.flaily.xynon.module.impl.movement.FlightModule;
-import fr.flaily.xynon.module.impl.render.ClickGUIModule;
-import fr.flaily.xynon.module.impl.render.HUDModule;
+import fr.flaily.xynon.module.impl.combat.Killaura;
+import fr.flaily.xynon.module.impl.movement.Flight;
+import fr.flaily.xynon.module.impl.player.Noslow;
+import fr.flaily.xynon.module.impl.player.Sprint;
+import fr.flaily.xynon.module.impl.render.ClickGUI;
+import fr.flaily.xynon.module.impl.render.HUD;
 import fr.flaily.xynon.utils.font.CustomFontRenderer;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -25,10 +28,13 @@ public class ModuleManager {
 //        register(new TestModule());
 //        register(new TestModule());
 //        register(new TestModule());
-        register(new ClickGUIModule());
-        register(new FlightModule());
+        register(new ClickGUI());
+        register(new Flight());
         register(new TestModule());
-        register(new HUDModule());
+        register(new HUD());
+        register(new Killaura());
+        register(new Noslow());
+        register(new Sprint());
 
         Xynon.INSTANCE.debugLogger().sendLog("Finished registering modules");
     }
@@ -67,6 +73,10 @@ public class ModuleManager {
         return modules.stream()
                 .filter(module -> categoryList.contains(module.getCategory()))
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public <T extends Module> T getModule(Class<T> tClass) {
+        return (T) modules.stream().filter(mod -> mod.getClass().equals(tClass)).findFirst().orElse(null);
     }
 
 }

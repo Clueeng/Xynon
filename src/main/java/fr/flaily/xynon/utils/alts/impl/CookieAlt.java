@@ -54,6 +54,7 @@ public class CookieAlt extends Alt {
 
                 // Run cookie login (blocking network code)
                 CookieAltsUtil.loginWithCookie(source.getAbsolutePath(), account -> {
+                    this.status = Status.LOGGING_IN;
                     if (account == null) {
                         Xynon.INSTANCE.gameLogger().sendLog("Failed to login with cookie alt.");
                         return;
@@ -64,6 +65,7 @@ public class CookieAlt extends Alt {
                 });
 
             } catch (Exception e) {
+                this.status = Status.FAILED;
                 e.printStackTrace();
                 Xynon.INSTANCE.gameLogger().sendLog("Exception while logging in with cookie alt: " + e.getMessage());
             }
@@ -75,10 +77,13 @@ public class CookieAlt extends Alt {
 
         this.username = account.getUsername();
         mc.session.switchSession(account);
+        this.status = Status.SUCCESS;
 
         Xynon.INSTANCE.gameLogger().sendLog("Logged in as " + this.username + " using cookie alt.");
 
         // Avoid duplicates, then add to AltManager
-        Xynon.INSTANCE.getAltManager().addAlt(this);
+        if(!Xynon.INSTANCE.getAltManager().alreadyIn(this)) {
+            Xynon.INSTANCE.getAltManager().addAlt(this);
+        }
     }
 }

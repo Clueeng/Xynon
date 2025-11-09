@@ -30,35 +30,31 @@ public class RangeFrame extends SettingFrame<RangeSetting> implements SettingSty
         double min = setting.minimum;
         double max = setting.maximum;
 
-        Gui.drawRect(getX(), getY(), getX() + width(), getY() + height(), 0xFF1F1F1F);
+        Gui.drawRect(0, 0, width(), height(), 0xFF1F1F1F);
 
-        // Draw min handle
         double ratioMin = (valMin - min) / (max - min);
         int fillMin = (int) (ratioMin * width());
 
-        // Draw max handle
         double ratioMax = (valMax - min) / (max - min);
         int fillMax = (int) (ratioMax * width());
 
-        // Draw range bar
-        Gui.drawRect(getX() + fillMin, getY(), getX() + fillMax, getY() + height(), 0xFF3FA9F5);
+        Gui.drawRect(fillMin, 0, fillMax, height(), 0xFF3FA9F5);
 
-        // Draw setting label
         font.drawStringWithShadow(
                 setting.name + ": " + String.format("%.2f", valMin) + " - " + String.format("%.2f", valMax),
-                getX() + 4, getY() + (height() / 2f) - (font.getHeight(setting.name) / 2f),
+                4, (height() / 2f) - (font.getHeight(setting.name) / 2f),
                 -1
         );
 
         if (dragging) {
-            double percent = (mouseX - getX()) / (double) width();
+            double relativeMouseX = mouseX - getX();
+            double percent = relativeMouseX / width();
             percent = Math.max(0, Math.min(1, percent));
 
-            // Determine whether user is dragging min or max handle
-            double distToMin = Math.abs(mouseX - (getX() + fillMin));
-            double distToMax = Math.abs(mouseX - (getX() + fillMax));
+            double distToMin = Math.abs(relativeMouseX - fillMin);
+            double distToMax = Math.abs(relativeMouseX - fillMax);
 
-            if (distToMin < distToMax) {
+            if (distToMin <= distToMax) {
                 setting.setValueMin(min + (max - min) * percent);
             } else {
                 setting.setValueMax(min + (max - min) * percent);

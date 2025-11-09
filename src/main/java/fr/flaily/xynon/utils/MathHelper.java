@@ -1,6 +1,13 @@
 package fr.flaily.xynon.utils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 
 public class MathHelper implements Utils {
 
@@ -30,5 +37,108 @@ public class MathHelper implements Utils {
                 (float) ((double) prevYaw + (double) f2 * 0.15D) ,
                 net.minecraft.util.MathHelper.clamp_float((float) ((double) prevPitch + (double) f3 * 0.15D), -90.0F, 90.0F)
         };
+    }
+
+
+
+    public static float randomNumber(float min, float max) {
+        return (float) Math.random() * (max - min) + min;
+    }
+
+    public static float accurateDistance(EntityLivingBase entityLiving) {
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        double playerX = player.posX;
+        double playerY = player.posY + player.getEyeHeight();
+        double playerZ = player.posZ;
+
+        AxisAlignedBB box = entityLiving.getEntityBoundingBox();
+
+        double closestX = clamp(playerX, box.minX, box.maxX);
+        double closestY = clamp(playerY, box.minY, box.maxY);
+        double closestZ = clamp(playerZ, box.minZ, box.maxZ);
+
+        double dx = playerX - closestX;
+        double dy = playerY - closestY;
+        double dz = playerZ - closestZ;
+        return (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    public static float accurateDistance(Vec3 feet, EntityLivingBase entityLiving) {
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        double playerX = feet.xCoord;
+        double playerY = feet.yCoord + player.getEyeHeight();
+        double playerZ = feet.zCoord;
+
+        AxisAlignedBB box = entityLiving.getEntityBoundingBox();
+
+        double closestX = clamp(playerX, box.minX, box.maxX);
+        double closestY = clamp(playerY, box.minY, box.maxY);
+        double closestZ = clamp(playerZ, box.minZ, box.maxZ);
+
+        double dx = playerX - closestX;
+        double dy = playerY - closestY;
+        double dz = playerZ - closestZ;
+        return (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    public static float accurateDistance(EntityLivingBase entityLiving, Vec3 position) {
+        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        double playerX = player.posX;
+        double playerY = player.posY + player.getEyeHeight();
+        double playerZ = player.posZ;
+
+        AxisAlignedBB box = entityLiving.getEntityBoundingBox().offset(
+                -entityLiving.posX + position.xCoord,
+                -entityLiving.posY + position.yCoord,
+                -entityLiving.posZ + position.zCoord
+        );
+
+        double closestX = clamp(playerX, box.minX, box.maxX);
+        double closestY = clamp(playerY, box.minY, box.maxY);
+        double closestZ = clamp(playerZ, box.minZ, box.maxZ);
+
+        double dx = playerX - closestX;
+        double dy = playerY - closestY;
+        double dz = playerZ - closestZ;
+        return (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+
+    public static boolean isLookingAtEntity(EntityPlayerSP player, Entity target, double maxDistance) {
+        Vec3 eyePosition = player.getPositionEyes(1.0F);
+        AxisAlignedBB targetBB = target.getEntityBoundingBox();
+        Vec3 lookVector = player.getLook(1.0F);
+        Vec3 endPosition = eyePosition.addVector(lookVector.xCoord * maxDistance, lookVector.yCoord * maxDistance, lookVector.zCoord * maxDistance);
+        MovingObjectPosition result = targetBB.calculateIntercept(eyePosition, endPosition);
+        return result != null;
+    }
+
+    private static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    public static float[] getRotations(Entity e) {
+        Minecraft mc = Minecraft.getMinecraft();
+        double deltaX = e.posX + (e.posX - e.lastTickPosX) - mc.thePlayer.posX,
+                deltaY = e.posY - 3.5 + e.getEyeHeight() - mc.thePlayer.posY + mc.thePlayer.getEyeHeight(),
+                deltaZ = e.posZ + (e.posZ - e.lastTickPosZ) - mc.thePlayer.posZ,
+                distance = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaZ, 2));
+
+        float yaw = (float) Math.toDegrees(-Math.atan(deltaX / deltaZ)),
+                pitch = (float) -Math.toDegrees(Math.atan(deltaY / distance));
+
+        if (deltaX < 0 && deltaZ < 0) {
+            yaw = (float) (90 + Math.toDegrees(Math.atan(deltaZ / deltaX)));
+        } else if (deltaX > 0 && deltaZ < 0) {
+            yaw = (float) (-90 + Math.toDegrees(Math.atan(deltaZ / deltaX)));
+        }
+        return new float[]{yaw, pitch};
+    }
+
+    public static float wrap(float value) {
+        value = value % 360.0F;
+        if (value >= 180.0F) value -= 360.0F;
+        if (value < -180.0F) value += 360.0F;
+        return value;
     }
 }

@@ -7,14 +7,16 @@ import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.impl.ModeSetting;
 import fr.flaily.xynon.module.settings.impl.NumberSetting;
+import fr.flaily.xynon.module.settings.impl.RangeSetting;
 import fr.flaily.xynon.utils.MotionUtils;
 import net.minecraft.util.EnumChatFormatting;
 
 import org.lwjgl.input.Keyboard;
 
 @FeatureInfo(name = "Flight", key = Keyboard.KEY_G, category = Module.Category.Movement)
-public class FlightModule extends Module {
+public class Flight extends Module {
 
+    public RangeSetting range = range("RangeTest", 0.0, 10.0, 1.0, 5.0, 0.1, () -> true);
     public ModeSetting modes = mode("Mode", "Motion", "Motion", "Grim");
     public NumberSetting speed = num("Speed", 0.2f, 2.0f, 1.0f, 0.1, () -> modes.is("Motion"));
 

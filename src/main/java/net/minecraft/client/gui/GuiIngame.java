@@ -9,7 +9,7 @@ import java.util.Random;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.render.ScreenEvent;
-import fr.flaily.xynon.module.impl.movement.FlightModule;
+import fr.flaily.xynon.module.impl.movement.Flight;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

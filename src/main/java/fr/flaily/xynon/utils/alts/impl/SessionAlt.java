@@ -70,6 +70,7 @@ public class SessionAlt extends Alt {
                     this.getRefreshToken(),
                     "mojang"
             );
+            this.status = Status.SUCCESS;
             this.username = mc.session.getUsername();
             System.out.println(this.username + " logged in with existing session.");
             return;
@@ -78,6 +79,7 @@ public class SessionAlt extends Alt {
         final CredentialSource source = new DeviceCodeCredentialSource(
                 "c36a9fb6-4f2a-41ff-90bd-ae7cc92031eb",
                 (uri, code) -> {
+                    this.status = Status.WAITING;
                     System.out.println("Please authenticate by visiting the following URL: " + uri);
                     System.out.println("And entering the code: " + code);
                 }
@@ -86,6 +88,7 @@ public class SessionAlt extends Alt {
         CompletableFuture<MicrosoftAuthResult> future = source.initiate().loginAsync();
 
         future.thenAcceptAsync(result -> {
+            this.status = Status.LOGGING_IN;
             MinecraftSessionAuthResult session = MinecraftSessionAuthResult.unwrap(result);
 
             System.out.println("Login successful for: " + session.username());
@@ -106,9 +109,11 @@ public class SessionAlt extends Alt {
             }
             
             Xynon.INSTANCE.getAltManager().addAlt(this);
+            this.status = Status.SUCCESS;
 
         }).exceptionally(throwable -> {
             throwable.printStackTrace();
+            this.status = Status.FAILED;
             throw new RuntimeException("Failed to authenticate", throwable);
         });
     }
