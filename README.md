@@ -3,7 +3,10 @@ Xynon Client is an open-source Minecraft 1.8.9 hacked client, in early developme
 Feel free to make pull requests <br>
 The client is still in its very early stages, hence why no bypasses have been made yet
 
-Want to support the project ? Don't hesitate to leave a star on the repo!
+This client uses the 1.8.9 Maven MCP project by Marcelektro, which is a very awesome repo that makes it so easy to work with MCP <br>
+https://github.com/Marcelektro/MCP-919
+
+> 🌟 Want to support the project ? Don't hesitate to leave a star on the repo!
 
 ## F.A.Q
 - How do I use the client ? <br>
