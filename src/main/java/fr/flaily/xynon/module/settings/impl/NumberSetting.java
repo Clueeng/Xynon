@@ -34,8 +34,6 @@ public class NumberSetting extends Setting<Double> {
         double v = value;
         double r;
         r = s * Math.round(v / s);
-        System.out.println("v="+value);
-        System.out.println("s="+r);
         this.value = r;
     }
 
