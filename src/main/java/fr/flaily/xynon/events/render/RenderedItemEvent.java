@@ -7,7 +7,7 @@ import net.minecraft.util.MathHelper;
 
 @AllArgsConstructor
 public class RenderedItemEvent implements Event{
-    public float equipProgress, swingProgress;
+    public float equipProgress, swingProgress, partialTicks;
 
 
     public void doBlockTransformations() {

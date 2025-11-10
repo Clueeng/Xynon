@@ -29,7 +29,7 @@ public class XynonMenu extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         MenuShader.render(1.0f);
-        Gui.drawRect(0, 0, width, height, new Color(0, 0, 0, 110).getRGB());
+        Gui.drawRect(0, 0, width, height, new Color(0, 0, 0, 40).getRGB());
         Xynon.INSTANCE.getFontManager().getFunnel().size(96).drawCenteredString("Xynon",
          width / 2f, 100f, -1);
 

@@ -149,6 +149,7 @@ public final class ItemStack
      */
     public boolean onItemUse(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
+
         boolean flag = this.getItem().onItemUse(this, playerIn, worldIn, pos, side, hitX, hitY, hitZ);
 
         if (flag)
@@ -170,6 +171,7 @@ public final class ItemStack
      */
     public ItemStack useItemRightClick(World worldIn, EntityPlayer playerIn)
     {
+        
         return this.getItem().onItemRightClick(this, worldIn, playerIn);
     }
 

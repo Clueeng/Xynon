@@ -12,15 +12,9 @@ import fr.flaily.xynon.module.settings.impl.BooleanSetting;
 @FeatureInfo(name = "Sprint", category = Module.Category.Player, key = -1)
 public class Sprint extends Module {
 
-    // Override move input
+    // Check EntityPlayerSP for omni
+    // EntityPlayerSP#onLivingUpdate (line 877)
     public BooleanSetting omni = bool("Omni", true, () -> true);
-
-    @EventHandler
-    public void onMoveInput(EventMoveInput eventMoveInput) {
-        if(omni.getValue()) {
-            // eventMoveInput.forward = Math.abs(eventMoveInput.forward);
-        }
-    }
 
     @EventHandler
     public void onUpdate(UpdateEvent event) {

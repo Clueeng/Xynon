@@ -6,7 +6,9 @@ import java.util.Comparator;
 import org.lwjgl.input.Keyboard;
 
 import best.azura.eventbus.handler.EventHandler;
+import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.EventTime;
+import fr.flaily.xynon.events.game.EventUseItem;
 import fr.flaily.xynon.events.player.MotionEvent;
 import fr.flaily.xynon.events.player.RotationEvent;
 import fr.flaily.xynon.events.player.UpdateEvent;
@@ -33,15 +35,19 @@ import net.minecraft.potion.Potion;
 @FeatureInfo(name = "Killaura", category = Module.Category.Combat, key = Keyboard.KEY_R)
 public class Killaura extends Module {
     public ModeSetting rotation = mode("Rotation Type", "Instant", "Instant", "Smooth");
-    public NumberSetting range = num("Range", 3.0, 6.0, 0.05, () -> true);
+    public NumberSetting range = num("Range", 3.0, 6.0, 3.00, 0.05, () -> true);
     public BooleanSetting raycastCheck = bool("Raycast", true, () -> true);
     public MultiSelectSetting allowedEntities = multi("Targets", Arrays.asList("Players", "Mobs"), Arrays.asList("Player", "Mobs"), () -> true);
+    public ModeSetting blockMode = mode("Block", "None", "None", "Vanilla", "Legit");
 
 
     private Entity target;
     private float yaw, pitch;
 
     public Timer timer = new Timer();
+
+    long nextDelay = 0L;
+    private long lastAttack = 0L;
 
     @EventHandler
     public void onRotation(RotationEvent event) {
@@ -84,6 +90,7 @@ public class Killaura extends Module {
     @EventHandler
     public void performAttack(UpdateEvent event) {
         timer.execute(() -> {
+            lastAttack = System.currentTimeMillis();
             // Xynon.INSTANCE.gameLogger().sendLog("Timer reached " + (System.currentTimeMillis()));
             boolean raycast = !raycastCheck.getValue() || MathHelper.isLookingAtEntity(mc.thePlayer, target, range.getValue());
             boolean shouldCrit = mc.thePlayer.fallDistance > 0.0F && !mc.thePlayer.onGround && !mc.thePlayer.isOnLadder() && !mc.thePlayer.isInWater() && !mc.thePlayer.isPotionActive(Potion.blindness) && mc.thePlayer.ridingEntity == null && target instanceof EntityLivingBase;
@@ -102,7 +109,28 @@ public class Killaura extends Module {
                 }
             }
 
-        }, getDelay(), true);
+            nextDelay = getDelay();
+        }, nextDelay, true);
+    }
+
+    @EventHandler
+    public void onUpdateUse(UpdateEvent event) {
+        if(target == null) return;
+        int ticksAdvance = 1;
+
+        if(blockMode.is("Legit")) {
+            mc.gameSettings.keyBindUseItem.pressed = mc.thePlayer.ticksExisted % 2 == 0;
+        }
+        if(blockMode.is("Vanilla")) {
+            mc.gameSettings.keyBindUseItem.pressed = true;
+            mc.thePlayer.setItemInUse(mc.thePlayer.getHeldItem(), 9999);
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+        mc.gameSettings.keyBindUseItem.pressed = false;
     }
 
     public long getDelay() {

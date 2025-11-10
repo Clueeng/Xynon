@@ -25,6 +25,7 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.game.EventUseItem;
 import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.screen.main.XynonMenu;
 
@@ -1580,6 +1581,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
      */
     private void rightClickMouse()
     {
+        // TODO ici
         if (!this.playerController.getIsHittingBlock())
         {
             this.rightClickDelayTimer = 4;

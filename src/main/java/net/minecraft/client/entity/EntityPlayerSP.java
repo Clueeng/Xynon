@@ -874,6 +874,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
             }
         }
         
+        // Omni sprint
         Sprint sprint = Xynon.INSTANCE.getModuleManager().getModule(Sprint.class);
         boolean spBypass = sprint.omni.isToggled() && sprint.isToggled();
 

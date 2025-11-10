@@ -2,10 +2,15 @@ package fr.flaily.xynon.click.classic;
 
 import fr.flaily.xynon.click.classic.frame.CategoryFrame;
 import fr.flaily.xynon.module.Module;
+import fr.flaily.xynon.utils.AnimFloat;
+import fr.flaily.xynon.utils.AnimFloat.Easing;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.input.Mouse;
+
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -13,6 +18,7 @@ public class ClassicGUI extends GuiScreen {
     public static ClassicGUI INSTANCE;
 
     public ArrayList<CategoryFrame> frames = new ArrayList<>();
+    public AnimFloat openAnim = new AnimFloat(0.0F, 0.1F, Easing.EASE_IN_OUT);
 
     public ScaledResolution sr;
     public ClassicGUI() {
@@ -49,6 +55,7 @@ public class ClassicGUI extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
+        openAnim.setTarget(1.0F);
 
         frames.forEach(CategoryFrame::init);
     }
@@ -74,6 +81,7 @@ public class ClassicGUI extends GuiScreen {
 
         if (keyCode == 1)
         {
+            this.openAnim.setTarget(0.0f);
             frames.forEach(CategoryFrame::startClosing);
 
             return;
@@ -86,6 +94,9 @@ public class ClassicGUI extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+
+        this.openAnim.update(partialTicks);
+        Gui.drawRect(0, 0, width, height, new Color(0, 0, 0, (int) (150 * openAnim.getValue())).getRGB());
 
         for (CategoryFrame f : frames) {
             f.render(mouseX, mouseY, partialTicks);

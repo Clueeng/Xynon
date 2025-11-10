@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.player.EventStrafe;
+import fr.flaily.xynon.module.impl.render.Animations;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -1338,6 +1339,12 @@ public abstract class EntityLivingBase extends Entity
      */
     private int getArmSwingAnimationEnd()
     {
+        if(this instanceof EntityPlayerSP) {
+            Animations anim = Xynon.INSTANCE.getModuleManager().getModule(Animations.class);
+            if(anim.isToggled() && anim.features.isSelected("Slow Swing")) {
+                return anim.itemSpeed.getValue().intValue();
+            }
+        }
         return this.isPotionActive(Potion.digSpeed) ? 6 - (1 + this.getActivePotionEffect(Potion.digSpeed).getAmplifier()) * 1 : (this.isPotionActive(Potion.digSlowdown) ? 6 + (1 + this.getActivePotionEffect(Potion.digSlowdown).getAmplifier()) * 2 : 6);
     }
 

@@ -11,6 +11,7 @@ public class NumberSetting extends Setting<Double> {
     public NumberSetting(String name, double min, double max, double value, Supplier<Boolean> supplier) {
         super(name, value, supplier);
         this.value = value;
+        setValue(value);
         this.minimum = min;
         this.maximum = max;
         this.step = 0.0;
@@ -18,6 +19,7 @@ public class NumberSetting extends Setting<Double> {
     public NumberSetting(String name, double min, double max, double value, double step, Supplier<Boolean> supplier) {
         super(name, value, supplier);
         this.value = value;
+        setValue(value);
         this.minimum = min;
         this.maximum = max;
         this.step = step;

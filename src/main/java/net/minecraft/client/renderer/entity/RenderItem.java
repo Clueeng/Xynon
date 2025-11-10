@@ -2,6 +2,9 @@ package net.minecraft.client.renderer.entity;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.module.impl.render.Animations;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockDoublePlant;
@@ -213,7 +216,10 @@ public class RenderItem implements IResourceManagerReloadListener
                     OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
                 }
 
-                if (stack.hasEffect() && (!Config.isCustomItems() || !CustomItems.renderCustomEffect(this, stack, model)))
+                Animations animation = Xynon.INSTANCE.getModuleManager().getModule(Animations.class);
+                boolean canItemGlow = stack.hasEffect() || (animation.features.isSelected("Enchant Glint") && animation.isToggled() && animation.glintAll.isToggled());
+
+                if (canItemGlow && (!Config.isCustomItems() || !CustomItems.renderCustomEffect(this, stack, model)))
                 {
                     this.renderEffect(model);
                 }
@@ -225,10 +231,16 @@ public class RenderItem implements IResourceManagerReloadListener
 
     private void renderEffect(IBakedModel model)
     {
+        Animations animation = Xynon.INSTANCE.getModuleManager().getModule(Animations.class);
+        boolean override = animation.isToggled() && animation.features.isSelected("Enchant Glint");
+
         if (!Config.isCustomItems() || CustomItems.isUseGlint())
         {
             if (!Config.isShaders() || !Shaders.isShadowPass)
             {
+
+                int glintColor = override ? animation.glintColor.getColor().getRGB() : -8372020;
+
                 GlStateManager.depthMask(false);
                 GlStateManager.depthFunc(514);
                 GlStateManager.disableLighting();
@@ -246,7 +258,7 @@ public class RenderItem implements IResourceManagerReloadListener
                 float f = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
                 GlStateManager.translate(f, 0.0F, 0.0F);
                 GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
-                this.renderModel(model, -8372020);
+                this.renderModel(model, glintColor);
                 GlStateManager.popMatrix();
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(8.0F, 8.0F, 8.0F);

@@ -381,6 +381,8 @@ public class ItemRenderer
             this.rotateWithPlayerRotations((EntityPlayerSP)abstractclientplayer, partialTicks);
             GlStateManager.enableRescaleNormal();
             GlStateManager.pushMatrix();
+            Animations animations = Xynon.INSTANCE.getModuleManager().getModule(Animations.class);
+
 
             if (this.itemToRender != null)
             {
@@ -405,9 +407,8 @@ public class ItemRenderer
                             break;
 
                         case BLOCK:{
-                            Animations animations = Xynon.INSTANCE.getModuleManager().getModule(Animations.class);
                             if(animations.isToggled()) {
-                                RenderedItemEvent event = new RenderedItemEvent(f, f1);
+                                RenderedItemEvent event = new RenderedItemEvent(f, f1, partialTicks);
                                 Xynon.INSTANCE.getEventBus().post(event);
                             }else {
                                 this.transformFirstPersonItem(f, 0.0F);
@@ -427,7 +428,20 @@ public class ItemRenderer
                     this.transformFirstPersonItem(f, f1);
                 }
 
-                this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
+                // this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
+                if (animations.isToggled() && animations.features.isSelected("Item Size")) {
+                    float sc = animations.itemSize.getValue().floatValue();
+                    GlStateManager.pushMatrix();
+                    // Scale around item center (approximate)
+                    GlStateManager.translate(0.5f, 0.5f, 0.5f);
+                    GlStateManager.scale(sc, sc, sc);
+                    GlStateManager.translate(-0.5f, -0.5f, -0.5f);
+
+                    this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
+                    GlStateManager.popMatrix();
+                } else {
+                    this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
+                }
             }
             else if (!abstractclientplayer.isInvisible())
             {

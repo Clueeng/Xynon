@@ -55,6 +55,6 @@ public class Flight extends Module {
 
     @Override
     public String getListName() {
-        return this.name + EnumChatFormatting.GRAY + " [" + modes.getCurrent() + "]";
+        return this.name + EnumChatFormatting.GRAY + " " + modes.getCurrent();
     }
 }
