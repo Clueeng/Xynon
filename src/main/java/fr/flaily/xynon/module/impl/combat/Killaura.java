@@ -2,6 +2,7 @@ package fr.flaily.xynon.module.impl.combat;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 
@@ -133,8 +134,23 @@ public class Killaura extends Module {
         mc.gameSettings.keyBindUseItem.pressed = false;
     }
 
+    public boolean isExhausted;
     public long getDelay() {
-        float cps = 12;
+        Random random = new Random();
+        if(random.nextFloat() > 0.95) {
+            isExhausted = true;
+        }
+        float a = mc.thePlayer.serverYaw;
+        float b = mc.thePlayer.serverPitch;
+        float c = mc.thePlayer.ticksExisted;
+
+        float f = 1.0f + (float) (Math.sin(a * b * c) * 0.2f);
+        float cps = Math.abs(12 - (6 * f));
+        if(isExhausted) {
+            cps = Math.max(2, cps * 0.8f - random.nextFloat());
+            isExhausted = Math.random() > 0.3f;
+        }
+        System.out.println("CPS: " + cps);
         return (long) (1000 / cps);
     }
 

@@ -53,7 +53,7 @@ public class Animations extends Module {
         float smoothSin = (float) ((float) Math.sin(
             (counter++) * Math.PI
         )) * 10e10f;
-        float smoothVal = slidingAnim.getValue();
+        float smoothVal = (slidingAnim.getValue()) * (event.swingProgress > 0 ? 1.0f : 0.0f);
 
         switch (animation.getCurrent()) {
             case "Legacy":
@@ -117,12 +117,6 @@ public class Animations extends Module {
 
     @EventHandler
     public void debug(UpdateEvent event) {
-        if(mc.thePlayer.isSneaking()) {
-            int ticks = 1;
-            if(mc.thePlayer.ticksExisted % ticks == 0) {
-                mc.thePlayer.swingItem();
-            }
-        }
     }
 
     @EventHandler

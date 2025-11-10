@@ -22,6 +22,7 @@ public class HUD extends Module implements Render {
             "Components", Arrays.asList("ArrayList", "Watermark"), Arrays.asList("ArrayList", "Watermark"), () -> true
     );
 
+    public ModeSetting rectMode = mode("Rect", "None", () -> components.isSelected("ArrayList"), "None", "Left", "Right", "Outline");
     public ModeSetting hudColorMode = mode("Color mode", "Single", () -> true, "Single", "Double", "Astolfo");
     public ColorSetting mainColor = color("Main Color", 360.0f, 1.0f, 1.0f, 255, () -> hudColorMode.is("Single") || hudColorMode.is("Double"));
     public ColorSetting accentColor = color("Accent Color", 360.0f, 1.0f, 1.0f, 255, () -> hudColorMode.is("Double"));
@@ -64,8 +65,8 @@ public class HUD extends Module implements Render {
         int index = 0;
         ArrayList<Module> test = Xynon.INSTANCE.getModuleManager().modules;
         ArrayList<Module> sort = Xynon.INSTANCE.getModuleManager().lengthSortedModules(big, test);
+        java.util.List<Module> shown = Xynon.INSTANCE.getModuleManager().lengthSortedModules(big, test).stream().filter(m -> m.getModAnimation().getValue() >= 0.01f).toList();
 
-        Module lastModule;
         for(Module module : sort) {
             if(module.getModAnimation().getValue() < 0.01f) continue;
             float anim = module.getModAnimation().getValue();
@@ -73,18 +74,47 @@ public class HUD extends Module implements Render {
             this.hudColor = getColor(index);
             float modLength = big.getWidth(module.getListName()) * anim;
             float moduleX = xPos - modLength;
+            int rectOffset = rectMode.is("Right") ? 6 : 0;
 
-            Gui.drawRect(moduleX - margin, yPos, moduleX + modLength, yPos + (height) * anim,
+            Gui.drawRect(moduleX - margin - (rectOffset / 2f), yPos, moduleX + modLength, yPos + (height) * anim,
                     new Color(0, 0, 0, 110).getRGB());
-            big.drawStringWithShadow(module.getListName(), moduleX - (margin / 2), yPos + (lineHeight / 2f), this.hudColor);
+            big.drawStringWithShadow(module.getListName(), moduleX - (margin / 2) - (rectOffset / 2f), yPos + (lineHeight / 2f), this.hudColor);
 
-            Gui.drawRect(moduleX - margin - 1, yPos, moduleX - margin, yPos + (height) * anim,
-                    this.hudColor);
+            // Rectangle
+            if(rectMode.is("Outline")) {
+                int size = shown.size() - 1;
+
+                float lineY = (yPos + (height) * anim);
+                if(index < size) {
+                    Module nextModule = shown.get(index + 1);
+                    
+                    float nextModLength = big.getWidth(nextModule.getListName()) * anim;
+                    float nextModuleX = xPos - nextModLength;
+                    float diff = (moduleX - margin - (rectOffset / 2f)) - (nextModuleX - margin - (rectOffset / 2f));
+
+                    Gui.drawRect(moduleX - margin - (rectOffset / 2f),
+                    lineY - 1, 
+                    moduleX - margin - (rectOffset / 2f) - diff,
+                    lineY, this.hudColor);
+                }else{
+                    Gui.drawRect(moduleX - margin,
+                    lineY - 1, moduleX + modLength,
+                    lineY, this.hudColor);
+                }
+                
+                
+            }
+            if(rectMode.is("Left") || rectMode.is("Outline")) {
+                Gui.drawRect(moduleX - margin - 1, yPos, moduleX - margin, yPos + (height) * anim, this.hudColor);
+            }
+
+            if(rectMode.is("Right")) {
+                Gui.drawRect(event.getSr().getScaledWidth() - margin, yPos, 
+                event.getSr().getScaledWidth() - margin + 1, yPos + (height * anim), hudColor);
+            }
 
 
             yPos += (height) * anim;
-
-            lastModule = module;
             index++;
         }
     }
