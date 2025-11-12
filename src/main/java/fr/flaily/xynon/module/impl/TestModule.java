@@ -8,6 +8,7 @@ import fr.flaily.xynon.events.player.RotationEvent;
 import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.impl.*;
+import fr.flaily.xynon.notification.impl.list.AppleNotification;
 import fr.flaily.xynon.utils.alts.Alt;
 import fr.flaily.xynon.utils.alts.impl.SessionAlt;
 
@@ -30,6 +31,7 @@ public class TestModule extends Module {
     @Override
     public void onEnable() {
         super.onEnable();
+        Xynon.INSTANCE.getNotificationManager().add(new AppleNotification("Name", "Description", 2000L));
     }
 
     @Override

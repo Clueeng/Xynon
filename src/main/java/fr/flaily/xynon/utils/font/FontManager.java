@@ -12,21 +12,28 @@ public class FontManager {
         // Add fonts here
         fonts.put("funnel", new CustomFont("Funnel.ttf"));
         fonts.put("inter", new CustomFont("Inter.ttf"));
+        fonts.put("tiktok_bold", new CustomFont("TikTok_Bold.ttf"));
+        fonts.put("tiktok_norm", new CustomFont("TikTok_Regular.ttf"));
     }
 
     public CustomFont getFunnel() {
-        if(!fonts.containsKey("funnel")) {
-            System.out.println("Font not found");
-            return null;
-        }
-        return fonts.get("funnel");
+        return getFont("funnel");
     }
     public CustomFont getInter() {
-        if(!fonts.containsKey("inter")) {
+        return getFont("inter");
+    }
+    public CustomFont getTikTokBold() {
+        return getFont("tiktok_bold");
+    }
+    public CustomFont getTikTokNormal() {
+        return getFont("tiktok_norm");
+    }
+    private CustomFont getFont(String name) {
+        if(!fonts.containsKey(name)) {
             System.out.println("Font not found");
             return null;
         }
-        return fonts.get("inter");
+        return fonts.get(name);
     }
 
 }

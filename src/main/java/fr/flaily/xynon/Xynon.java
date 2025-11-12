@@ -3,8 +3,10 @@ package fr.flaily.xynon;
 import best.azura.eventbus.core.EventBus;
 import fr.flaily.xynon.command.CommandManager;
 import fr.flaily.xynon.module.ModuleManager;
+import fr.flaily.xynon.notification.NotificationManager;
 import fr.flaily.xynon.utils.alts.AltManager;
 import fr.flaily.xynon.utils.font.FontManager;
+import fr.flaily.xynon.utils.irc.XynonClient.LoginResult;
 import fr.flaily.xynon.utils.logger.LoggerManager;
 import fr.flaily.xynon.utils.logger.impl.DebugLogger;
 import fr.flaily.xynon.utils.logger.impl.GameLogger;
@@ -28,6 +30,8 @@ public enum Xynon {
     public ModuleManager moduleManager;
     public AltManager altManager;
     public CommandManager commandManager;
+    public LoginResult user;
+    public NotificationManager notificationManager;
 
     public void start() {
         getLoggerManager().init();
@@ -40,6 +44,7 @@ public enum Xynon {
         moduleManager = new ModuleManager();
         altManager = new AltManager();
         commandManager = new CommandManager();
+        notificationManager = new NotificationManager();
     }
 
     public void stop() {

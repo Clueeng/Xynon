@@ -48,6 +48,9 @@ public class Animations extends Module {
         }
         slidingAnim.update(event.partialTicks);
 
+        if(animationFix.isToggled()) {
+            event.equipProgress = 0.0f;
+        }
 
         float smoothSwing = (float) Math.sin(event.swingProgress * Math.PI); 
         float smoothSin = (float) ((float) Math.sin(

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.utils.irc.XynonClient;
+import fr.flaily.xynon.utils.irc.XynonClient.LoginResult;
 import fr.flaily.xynon.utils.render.shader.impl.MenuShader;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -24,6 +26,7 @@ public class XynonMenu extends GuiScreen {
         for (int i = 0; i < buttonLabels.length; i++) {
             buttons.add(new XynonButton(width / 2 - 100, startY + (i * 24), 200, 24, buttonLabels[i], i + 1));
         }
+        buttons.add(new XynonButton(4, 4, 120, 32, "Login with Discord", 40));
     }
 
     @Override
@@ -35,9 +38,21 @@ public class XynonMenu extends GuiScreen {
 
         // buttons background
         int buttonHeight = buttons.size() * 32;
-        Gui.drawRect(width / 2 - 120, height / 2 - 60, width / 2 + 120, height / 2 + buttonHeight - 50, new Color(0, 0, 0, 50).getRGB());
+        Gui.drawRect(width / 2 - 120, height / 2 - 60, width / 2 + 120, height / 2 + buttonHeight - 48, new Color(0, 0, 0, 60).getRGB());
 
+
+        if(Xynon.INSTANCE.user != null) {
+            String name = Xynon.INSTANCE.user.name;
+            Gui.drawRect(width / 2 - 120, height / 2 - 120, width / 2 + 120, height / 2 - 90, new Color(0, 0, 0, 60).getRGB());
+            Xynon.INSTANCE.getFontManager().getFunnel().size(20).drawCenteredString("Welcome back, " + name,
+            width / 2f, height / 2 - 106, -1);
+
+        }
         for (XynonButton button : buttons) {
+            if(button.id > 10) {
+                button.render(mouseX, mouseY, partialTicks);
+                break;
+            }
             button.x = width / 2 - 100;
             button.y = height / 2 - 50 + buttons.indexOf(button) * 32;
 
@@ -60,25 +75,27 @@ public class XynonMenu extends GuiScreen {
             if (button.isHovered(mouseX, mouseY)) {
                 switch (button.id) {
                     case 1:
-                        // Handle Singleplayer button click
                         mc.displayGuiScreen(new GuiSelectWorld(this));
                         break;
                     case 2:
-                        // Handle Multiplayer button click
                         mc.displayGuiScreen(new GuiMultiplayer(this));
                         break;
                     case 3:
-                        // Handle Settings button click
                         mc.displayGuiScreen(new GuiOptions(this, mc.gameSettings));
                         break;
                     case 4:
-                        // Handle Alt Manager button click
                         mc.displayGuiScreen(new fr.flaily.xynon.screen.alts.GuiAltManager());
                         break;
                     case 5:
-                        // Handle Quit button click
                         mc.shutdown();
                         break;
+                    case 40:{
+                        XynonClient login = new XynonClient();
+                        // loginThread.run();
+                        Thread loginThread = new Thread(login);
+                        loginThread.start();
+                        break;
+                    }
                     default:
                         break;
                 }

@@ -1,12 +1,16 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
+
+import fr.flaily.xynon.Xynon;
+
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import org.apache.logging.log4j.LogManager;
@@ -81,6 +85,12 @@ public class GuiNewChat extends Gui
                                 int j2 = -i1 * 9;
                                 drawRect(i2, j2 - 9, i2 + l + 4, j2, l1 / 2 << 24);
                                 String s = chatline.getChatComponent().getFormattedText();
+                                if(Xynon.INSTANCE.getUser() != null) {
+                                    s = s.replace(mc.thePlayer.getName(), mc.thePlayer.getName() + 
+                                    EnumChatFormatting.DARK_GRAY + " (" +
+
+                                    EnumChatFormatting.GRAY + Xynon.INSTANCE.getUser().name + EnumChatFormatting.DARK_GRAY + ")");
+                                }
                                 GlStateManager.enableBlend();
                                 this.mc.fontRendererObj.drawStringWithShadow(s, (float)i2, (float)(j2 - 8), 16777215 + (l1 << 24));
                                 GlStateManager.disableAlpha();

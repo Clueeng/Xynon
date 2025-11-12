@@ -14,7 +14,8 @@ public class AnimFloat {
     private Easing easing;
     private long lastTime = -1;
 
-    public enum Easing { LINEAR, EASE_OUT_BACK, EASE_IN_OUT, LERP }
+    public enum Easing { LINEAR, EASE_OUT_BACK, EASE_IN_OUT, LERP,
+        EASE_OUT_CUBIC }
 
     public AnimFloat(float start, float speed, Easing easing) {
         this.value = start;
@@ -54,6 +55,8 @@ public class AnimFloat {
                 return easeOutBack(value);
             case EASE_IN_OUT:
                 return easeInOut(value);
+            case EASE_OUT_CUBIC:
+                return easeOutCubic(value);
             default:
                 return value;
         }
@@ -74,5 +77,8 @@ public class AnimFloat {
 
     private float easeInOut(float t) {
         return t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+    }
+    private float easeOutCubic(float t) {
+        return 1f - (float) Math.pow(1f - t, 3f);
     }
 }

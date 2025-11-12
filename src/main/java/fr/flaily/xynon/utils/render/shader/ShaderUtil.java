@@ -151,6 +151,27 @@ public class ShaderUtil implements Utils {
         }
     }
 
+    public void setUniformb(String name, boolean... args) {
+        int loc = glGetUniformLocation(programID, name);
+        switch (args.length) {
+            case 1:
+                glUniform1i(loc, args[0] ? 1 : 0);
+                break;
+            case 2:
+                glUniform2i(loc, args[0] ? 1 : 0, args[1] ? 1 : 0);
+                break;
+            case 3:
+                glUniform3i(loc, args[0] ? 1 : 0, args[1] ? 1 : 0, args[2] ? 1 : 0);
+                break;
+            case 4:
+                glUniform4i(loc, args[0] ? 1 : 0, args[1] ? 1 : 0, args[2] ? 1 : 0, args[3] ? 1 : 0);
+                break;
+            default:
+                throw new IllegalArgumentException("Only 1 to 4 boolean arguments are supported.");
+        }
+    }
+
+
     public void setUniformi(String name, int... args) {
         int loc = glGetUniformLocation(programID, name);
         if (args.length > 1) glUniform2i(loc, args[0], args[1]);

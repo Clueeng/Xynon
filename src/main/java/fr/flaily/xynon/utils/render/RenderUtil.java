@@ -1251,4 +1251,14 @@ public class RenderUtil {
         }
         return framebuffer;
     }
+    
+    public static void startRoundedClip(float x, float y, float x2, float y2, float radius) {
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        // Use the coordinates of the notification box to set the scissor
+        prepareScissorBox(x, y, x2, y2);
+    }
+
+    public static void endRoundedClip() {
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+    }
 }

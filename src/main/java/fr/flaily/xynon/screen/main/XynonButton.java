@@ -47,6 +47,7 @@ public class XynonButton {
         GL11.glTranslatef(-(x + width / 2f), -(y + height / 3f), 0);
 
         RenderUtil.drawRoundedRect(x, y, width, height, 5f, backgroundColor);
+        RenderUtil.drawUnfilledRectangle(x, y, x + width, y + height, 5f, new Color(12, 12, 12).getRGB(), 2f);
 
         font.drawCenteredString(text, x + width / 2f, 6 + y + (height - font.getHeight("A")) / 2f, -1);
 

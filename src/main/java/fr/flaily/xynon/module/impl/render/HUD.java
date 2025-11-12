@@ -8,12 +8,20 @@ import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.module.settings.impl.ColorSetting;
 import fr.flaily.xynon.module.settings.impl.ModeSetting;
 import fr.flaily.xynon.module.settings.impl.MultiSelectSetting;
+import fr.flaily.xynon.utils.BlurRenderer;
 import fr.flaily.xynon.utils.render.ColorUtils;
+import fr.flaily.xynon.utils.render.RenderUtil;
+import fr.flaily.xynon.utils.render.shader.impl.GaussianBlur;
+import fr.flaily.xynon.utils.render.shader.impl.LSDShader;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.shader.Framebuffer;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.lwjgl.opengl.GL11;
 
 @FeatureInfo(name = "HUD", key = -1, category = Module.Category.Render)
 public class HUD extends Module implements Render {
@@ -29,10 +37,34 @@ public class HUD extends Module implements Render {
 
     public int hudColor;
 
+    Framebuffer blurBuffer = null;
+
     @EventHandler
     public void onRender(ScreenEvent event) {
         if(components.isSelected("Watermark")) {
             String watermark = "Xynon";
+            mc.fontRendererObj.drawStringWithShadow(watermark, 6, 6, -1);
+
+
+
+
+            blurBuffer = RenderUtil.createFrameBuffer(blurBuffer);
+            blurBuffer.bindFramebuffer(true);
+
+            GlStateManager.clearColor(0, 0, 0, 0);
+            GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT);
+
+            // To be blurred
+
+            // 1. Blur entire screen
+            GaussianBlur.renderBlur(50.0f);
+            RenderUtil.drawRoundedRect(4, 4, 100, 100, 12, new Color(0, 0, 0, 80).getRGB());
+
+            blurBuffer.unbindFramebuffer();
+
+            mc.getFramebuffer().bindFramebuffer(true);
+
+
             mc.fontRendererObj.drawStringWithShadow(watermark, 6, 6, -1);
         }
 
