@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.game.EventUseItem;
+import fr.flaily.xynon.events.render.OverScreenEvent;
 import fr.flaily.xynon.module.Module;
 import fr.flaily.xynon.screen.main.XynonMenu;
 
@@ -1176,6 +1177,9 @@ public class Minecraft implements IThreadListener, IPlayerUsage
             this.mcProfiler.profilingEnabled = false;
             this.prevFrameTime = System.nanoTime();
         }
+
+        OverScreenEvent event = new OverScreenEvent(this.timer.renderPartialTicks);
+        Xynon.INSTANCE.getEventBus().post(event);
 
         this.guiAchievement.updateAchievementWindow();
         this.framebufferMc.unbindFramebuffer();
