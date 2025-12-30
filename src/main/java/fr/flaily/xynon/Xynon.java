@@ -3,6 +3,7 @@ package fr.flaily.xynon;
 import best.azura.eventbus.core.EventBus;
 import fr.flaily.xynon.command.CommandManager;
 import fr.flaily.xynon.module.ModuleManager;
+import fr.flaily.xynon.module.impl.render.Render;
 import fr.flaily.xynon.notification.NotificationManager;
 import fr.flaily.xynon.utils.alts.AltManager;
 import fr.flaily.xynon.utils.font.FontManager;
@@ -45,6 +46,7 @@ public enum Xynon {
         altManager = new AltManager();
         commandManager = new CommandManager();
         notificationManager = new NotificationManager();
+        fontManager.preload();
     }
 
     public void stop() {
@@ -58,4 +60,14 @@ public enum Xynon {
         return getLoggerManager().gameLogger;
     }
 
+    /*
+    Things to add to Xynon
+AutoPotion (would prob require some utility event like InputOverrideEvent to prevent the player from clicking keys when modules takeover)
+AutoRefill (Can we simulate mouse movements and clicks in java?)
+BedInfo
+Bedwars Overlay (Minimal)
+
+ViaVersion impl maybe
+
+     */
 }

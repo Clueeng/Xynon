@@ -2,13 +2,15 @@ package fr.flaily.xynon.module;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.module.impl.TestModule;
+import fr.flaily.xynon.module.impl.combat.AutoClicker;
 import fr.flaily.xynon.module.impl.combat.Killaura;
+import fr.flaily.xynon.module.impl.combat.Reach;
+import fr.flaily.xynon.module.impl.combat.Velocity;
 import fr.flaily.xynon.module.impl.movement.Flight;
+import fr.flaily.xynon.module.impl.player.FastPlace;
 import fr.flaily.xynon.module.impl.player.Noslow;
 import fr.flaily.xynon.module.impl.player.Sprint;
-import fr.flaily.xynon.module.impl.render.Animations;
-import fr.flaily.xynon.module.impl.render.ClickGUI;
-import fr.flaily.xynon.module.impl.render.HUD;
+import fr.flaily.xynon.module.impl.render.*;
 import fr.flaily.xynon.utils.font.CustomFontRenderer;
 import net.minecraft.client.gui.FontRenderer;
 
@@ -34,8 +36,15 @@ public class ModuleManager {
         register(new TestModule());
         register(new HUD());
         register(new Killaura());
+        register(new AutoClicker());
+        register(new Reach());
+        register(new Velocity());
+        register(new FastPlace());
         register(new Noslow());
         register(new Sprint());
+        register(new ESP());
+        register(new Tracers());
+        register(new Chams());
         register(new Animations());
 
         Xynon.INSTANCE.debugLogger().sendLog("Finished registering modules");

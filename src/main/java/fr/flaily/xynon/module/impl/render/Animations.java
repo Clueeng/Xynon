@@ -33,7 +33,7 @@ public class Animations extends Module {
     public NumberSetting itemSize = num("Item Size", 0.0f, 2.0f, 1.0f, 0.05f, () -> features.isSelected("Item Size"));
     public NumberSetting itemSpeed = num("Swing Speed", 6.0f, 24.0f, 6.0f, 1f, () -> features.isSelected("Slow Swing"));
     public BooleanSetting glintAll = bool("All Enchanted", true, () -> features.isSelected("Enchant Glint"));
-    public ColorSetting glintColor = color("Glint Color", 0.0F, 0.0f, 0.0F, 255);
+    public ColorSetting glintColor = color("Glint Color", 85, 41, 155, 255);
     
 
     @EventHandler

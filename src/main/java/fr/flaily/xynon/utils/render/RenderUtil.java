@@ -306,6 +306,10 @@ public class RenderUtil {
         GlStateManager.alphaFunc(GL_GREATER, (float) (limit * .01));
     }
 
+    public static void color(Color color) {
+        GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+    }
+
     public enum RoundingMode {
         TOP_LEFT,
         BOTTOM_LEFT,

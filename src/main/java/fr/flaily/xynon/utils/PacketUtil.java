@@ -13,6 +13,9 @@ public class PacketUtil implements Utils {
     public static void sendNoPacketEvent(Packet p){
         Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueueNoEvent(p);
     }
+    public static void sendPacketEvent(Packet p){
+        Minecraft.getMinecraft().thePlayer.sendQueue.addToSendQueue(p);
+    }
 
     private static List<Class> blinkPackets = Arrays.asList(C03PacketPlayer.class, C03PacketPlayer.C04PacketPlayerPosition.class,
             C03PacketPlayer.C05PacketPlayerLook.class, C03PacketPlayer.C06PacketPlayerPosLook.class);

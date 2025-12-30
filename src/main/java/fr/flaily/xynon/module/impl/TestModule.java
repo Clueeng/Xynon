@@ -23,7 +23,7 @@ public class TestModule extends Module {
     public BooleanSetting test = bool("Test", true, () -> true);
     public BooleanSetting testTwo = bool("Other Test", true, () -> true);
 //    public ModeSetting testmode2 = mode("TestMode", "Value1", "Value1", "Value2", "Value3");
-    public ColorSetting color = color("Test", 1f, 1f, 1f, 255);
+    public ColorSetting color = color("Test", 255, 255, 255, 255);
     public NumberSetting numberSetting = num("NumTest", 1f, 10f, 5f, () -> true);
     public MultiSelectSetting selectSetting = multi("ChoiceTest", Arrays.asList("A", "B", "C"), Arrays.asList("A", "B", "C"), () -> true);
     public RangeSetting rangeSetting = range("RangeTest", 0.0, 100.0, 25.0, 75.0, 1.0, () -> true);

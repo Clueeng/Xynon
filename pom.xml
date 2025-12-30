@@ -63,6 +63,8 @@
             <version>1.18.36</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- -->
         <dependency>
             <groupId>best.azura</groupId>
             <artifactId>Azura-Event-Bus</artifactId>

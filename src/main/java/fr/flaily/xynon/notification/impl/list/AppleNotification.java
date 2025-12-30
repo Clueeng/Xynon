@@ -1,5 +1,8 @@
 package fr.flaily.xynon.notification.impl.list;
 
+import fr.flaily.xynon.utils.MathHelper;
+import fr.flaily.xynon.utils.render.shader.impl.GaussianBlur;
+import net.minecraft.client.gui.Gui;
 import org.lwjgl.opengl.GL11;
 
 import fr.flaily.xynon.module.impl.render.Render;
@@ -13,35 +16,31 @@ import fr.flaily.xynon.utils.render.RenderUtil;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
-// Assuming RenderUtil.drawRoundedRect3 draws a filled rounded rectangle
-// and 'medium' is a FontRenderer instance.
-
 public class AppleNotification extends Notification implements Render {
 
     private float x, y, width, height;
-    private static final float PADDING = 10.0f; // Padding inside the box
-    private static final float CORNER_RADIUS = 12.0f; // High radius for modern look
-    private static final int STACK_SPACING = 8; // Spacing between stacked notifications
+    private static final float PADDING = 10.0f;
+    private static final float CORNER_RADIUS = 12.0f;
+    private static final int STACK_SPACING = 8;
 
     private final ScaledResolution sr = new ScaledResolution(mc);
-    private final AnimFloat alphaAnim;  // Alpha for fade in/out
-    private final AnimFloat slideAnim;  // Position for slide in/out
+    private final AnimFloat alphaAnim;
+    private final AnimFloat slideAnim;
 
     public AppleNotification(String title, String description, long delay) {
         super(title, description, delay, NotificationType.STACKABLE);
 
-        // Calculate dynamic width based on text
         this.width = Math.max(medium.getWidth(description), medium.getWidth(title)) + (PADDING * 2);
         this.height = medium.getHeight("A") * 2 + PADDING * 2; // Enough space for 2 lines + padding
 
-        // Animation setup: use EASE_OUT_CUBIC for a slick, decelerating entry
         this.alphaAnim = new AnimFloat(0.0f, 0.08f, Easing.EASE_OUT_CUBIC);
         this.slideAnim = new AnimFloat(0.0f, 0.1f, Easing.EASE_OUT_CUBIC);
         
-        // Start animation (Slide in and fade in simultaneously)
         this.alphaAnim.setTarget(1.0f);
         this.slideAnim.setTarget(1.0f);
-        this.created = System.currentTimeMillis(); // Start timer right away
+        this.created = System.currentTimeMillis();
+
+        this.y = sr.getScaledHeight();
     }
 
     @Override
@@ -52,22 +51,17 @@ public class AppleNotification extends Notification implements Render {
         float animValue = slideAnim.getValue();
         float alpha = alphaAnim.getValue();
 
-        // 1. Calculate Target Position
-        float targetY = 10 + (height + STACK_SPACING) * index;
+//        float targetY = 48 * index;
+        float targetY = sr.getScaledHeight() - (10 + (height + STACK_SPACING) * index) - 48;
         float targetX = sr.getScaledWidth() - width - 10;
 
-        // 2. Apply Slide Animation (Slide in from the right, starting at +width)
-        // The notification slides in 100% (animValue=1) at targetX.
-        // It starts at targetX + width (animValue=0).
         this.x = targetX + (width * (1 - animValue));
-        this.y = targetY;
+        this.y = (float) MathHelper.lerp(0.03f, this.y, targetY);
 
         drawNotificationBox(alpha);
         drawText(alpha);
 
-        // 3. Disappearance Trigger
         if (alphaAnim.getTarget() >= 0.99f && hasElapsed()) {
-            // Start the exit animation: slide out and fade out simultaneously
             alphaAnim.setTarget(0.0f);
             slideAnim.setTarget(0.0f);
         }
@@ -78,38 +72,36 @@ public class AppleNotification extends Notification implements Render {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-        // Colors similar to macOS notification (light translucent gray)
-        int baseColor = (int)(alpha * 120) << 24 | new Color(240, 240, 255).getRGB(); // dark gray with transparency
+        int baseColor = new Color(240, 240, 255, 40).getRGB(); // dark gray with transparency
         int shadowColor = (int)(alpha * 80) << 24 | 0x000000; // soft shadow
 
         // Shadow
-        RenderUtil.drawRoundedRect3(x + 2, y + 2, x + width + 2, y + height + 2, CORNER_RADIUS, shadowColor);
-
-        // Background
-        RenderUtil.drawRoundedRect3(x, y, x + width, y + height, CORNER_RADIUS, baseColor);
+        GaussianBlur.renderBlur(13f, () -> {
+            RenderUtil.drawRoundedRect3(x, y, width + 48, height, CORNER_RADIUS, -1);
+        });
+        RenderUtil.drawRoundedRect3(x, y, width + 48, height, CORNER_RADIUS, new Color(0, 0, 0, 30).getRGB());
 
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
     }
 
     private void drawText(float alpha) {
-        int titleColor = ((int)(alpha * 255) << 24) | new Color(24, 24, 25).getRGB();
-        int descColor = ((int)(alpha * 200) << 24) | new Color(53, 53, 53).getRGB();
+        int titleColor = ((int)(alpha * 255) << 24) | new Color(230, 230, 230).getRGB();
+        int descColor = ((int)(alpha * 200) << 24) | new Color(171, 171, 171).getRGB();
 
         float textStartX = x + PADDING + 6; // a bit more left padding
-        float textStartY = y + PADDING + 2;
+        float textStartY = y + PADDING - 2;
 
         // Title (bold)
-        tiktokBoldMedium.drawString(title, textStartX, textStartY, titleColor);
+        tiktokBoldMedium.drawStringWithShadow(title, textStartX, textStartY, titleColor);
 
         // Description (lighter)
-        tiktokMedium.drawString(description, textStartX, textStartY + tiktokMedium.getHeight("A") + 2, descColor);
+        tiktokMedium.drawStringWithShadow(description, textStartX, textStartY + tiktokMedium.getHeight("A") + 2, descColor);
     }
 
 
     @Override
     public boolean shouldDisappear() {
-        // Disappear when the animation is complete and the target is 0.0f (faded out)
         return alphaAnim.getTarget() <= 0.01f && alphaAnim.getValue() <= 0.01f;
     }
 }

@@ -2,6 +2,7 @@ package net.minecraft.util;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.game.EventMoveInput;
+import fr.flaily.xynon.events.game.EventOverrideInput;
 import net.minecraft.client.settings.GameSettings;
 
 public class MovementInputFromOptions extends MovementInput
@@ -15,31 +16,34 @@ public class MovementInputFromOptions extends MovementInput
 
     public void updatePlayerMoveState()
     {
+        EventOverrideInput input = new EventOverrideInput();
+        Xynon.INSTANCE.getEventBus().post(input);
+
         this.moveStrafe = 0.0F;
         this.moveForward = 0.0F;
 
-        if (this.gameSettings.keyBindForward.isKeyDown())
+        if (this.gameSettings.keyBindForward.isKeyDown() && !input.isChoked(this.gameSettings.keyBindForward))
         {
             ++this.moveForward;
         }
 
-        if (this.gameSettings.keyBindBack.isKeyDown())
+        if (this.gameSettings.keyBindBack.isKeyDown() && !input.isChoked(this.gameSettings.keyBindBack))
         {
             --this.moveForward;
         }
 
-        if (this.gameSettings.keyBindLeft.isKeyDown())
+        if (this.gameSettings.keyBindLeft.isKeyDown() && !input.isChoked(this.gameSettings.keyBindLeft))
         {
             ++this.moveStrafe;
         }
 
-        if (this.gameSettings.keyBindRight.isKeyDown())
+        if (this.gameSettings.keyBindRight.isKeyDown() && !input.isChoked(this.gameSettings.keyBindRight))
         {
             --this.moveStrafe;
         }
 
-        this.jump = this.gameSettings.keyBindJump.isKeyDown();
-        this.sneak = this.gameSettings.keyBindSneak.isKeyDown();
+        this.jump = this.gameSettings.keyBindJump.isKeyDown() && !input.isChoked(this.gameSettings.keyBindJump);
+        this.sneak = this.gameSettings.keyBindSneak.isKeyDown() && !input.isChoked(this.gameSettings.keyBindSneak);
 
         if (this.sneak)
         {

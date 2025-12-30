@@ -25,7 +25,7 @@ public class CategoryFrame implements CategoryStyle {
     private int dragX, dragY;
 
     @Getter
-    private AnimFloat anim = new AnimFloat(0f, 0.04f, AnimFloat.Easing.EASE_OUT_BACK);
+    private AnimFloat anim = new AnimFloat(0f, 0.09f, AnimFloat.Easing.EASE_OUT_BACK);
 
     @Getter
     public boolean showModules = true; // default expanded

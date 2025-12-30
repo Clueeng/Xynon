@@ -1,8 +1,16 @@
 package net.minecraft.client.renderer.entity;
 
 import com.google.common.collect.Lists;
+
+import java.awt.*;
 import java.nio.FloatBuffer;
 import java.util.List;
+
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.module.impl.render.Chams;
+import fr.flaily.xynon.utils.WorldUtils;
+import fr.flaily.xynon.utils.render.RenderUtil;
+import fr.flaily.xynon.utils.render.shader.impl.GaussianBlur;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,6 +39,8 @@ import net.optifine.shaders.Shaders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public abstract class RendererLivingEntity<T extends EntityLivingBase> extends Render<T>
 {
@@ -380,9 +390,31 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                 GlStateManager.blendFunc(770, 771);
                 GlStateManager.alphaFunc(516, 0.003921569F);
             }
-
+            // TODO : Chams
+            Chams chams = Xynon.INSTANCE.getModuleManager().getModule(Chams.class);
+            Color show = chams.shown.getColor();
+            Color hidden = chams.hidden.getColor();
+            if(chams.isToggled() && WorldUtils.isEntityValid(entitylivingbaseIn, chams.validEntities)) {
+                glPushAttrib(GL_ALL_CLIENT_ATTRIB_BITS);
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glDisable(GL_TEXTURE_2D);
+                GlStateManager.disableLighting();
+                RenderUtil.color(hidden);
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+                glDisable(GL_DEPTH_TEST);
+            }
             this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
-
+            if(chams.isToggled() && WorldUtils.isEntityValid(entitylivingbaseIn, chams.validEntities)) {
+                glEnable(GL_DEPTH_TEST);
+                RenderUtil.color(show);
+                this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
+                GlStateManager.enableLighting();
+                glEnable(GL_TEXTURE_2D);
+                glDisable(GL_BLEND);
+                glPopAttrib();
+                glColor4f(1, 1, 1, 1);
+            }
             if (flag1)
             {
                 GlStateManager.disableBlend();

@@ -36,4 +36,14 @@ public class FontManager {
         return fonts.get(name);
     }
 
+    public void preload() {
+        int[] sizes = { 12, 15, 18, 20, 24, 32 };
+
+        for (int size : sizes) {
+            getInter().size(size);
+            getTikTokNormal().size(size);
+            getTikTokBold().size(size);
+            getFunnel().size(size);
+        }
+    }
 }

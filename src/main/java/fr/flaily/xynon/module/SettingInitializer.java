@@ -1,5 +1,6 @@
 package fr.flaily.xynon.module;
 
+import java.awt.*;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -43,8 +44,22 @@ public interface SettingInitializer {
         return setting;
     }
 
-    default ColorSetting color(String name, float a, float b, float c, int alpha) {
-        ColorSetting colorSetting = new ColorSetting(name, a, b, c, alpha);
+    default MultiSelectSetting targetChoice(Supplier<Boolean> supplier) {
+        return multi("Targets",
+                List.of("Players", "Mobs", "Passive")
+                , List.of(), supplier);
+    }
+
+    default ColorSetting color(String name, int r, int g, int b, int alpha) {
+        float[] hsv = Color.RGBtoHSB(r, g, b, null);
+        ColorSetting colorSetting = new ColorSetting(
+                name,
+                hsv[0] * 360f,
+                hsv[1],
+                hsv[2],
+                alpha
+        );
+
         add(colorSetting);
         return colorSetting;
     }
@@ -67,8 +82,8 @@ public interface SettingInitializer {
         return modeSetting;
     }
 
-    default RangeSetting range(String name, double min, double max, double valueMin, double valueMax, Supplier<Boolean> supplier) {
-        RangeSetting rangeSetting = new RangeSetting(name, min, max, valueMin, valueMax, supplier);
+    default RangeSetting range(String name, double min, double max, double valueLow, double valueMax, Supplier<Boolean> supplier) {
+        RangeSetting rangeSetting = new RangeSetting(name, min, max, valueLow, valueMax, supplier);
         add(rangeSetting);
         return rangeSetting;
     }

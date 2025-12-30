@@ -25,9 +25,13 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.game.EventClick;
+import fr.flaily.xynon.events.game.EventOverrideInput;
+import fr.flaily.xynon.events.game.EventRunTick;
 import fr.flaily.xynon.events.game.EventUseItem;
 import fr.flaily.xynon.events.render.OverScreenEvent;
 import fr.flaily.xynon.module.Module;
+import fr.flaily.xynon.module.impl.render.Render;
 import fr.flaily.xynon.screen.main.XynonMenu;
 
 import org.apache.commons.io.IOUtils;
@@ -297,7 +301,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     /**
      * When you place a block, it's set to 6, decremented once per tick, when it's 0, you can place another block.
      */
-    private int rightClickDelayTimer;
+    public int rightClickDelayTimer;
     private String serverName;
     private int serverPort;
 
@@ -1535,8 +1539,10 @@ public class Minecraft implements IThreadListener, IPlayerUsage
         }
     }
 
-    private void clickMouse()
+    public void clickMouse()
     {
+        EventClick click = new EventClick(EventClick.ClickType.LEFT);
+        Xynon.INSTANCE.getEventBus().post(click);
         if (this.leftClickCounter <= 0)
         {
             this.thePlayer.swingItem();
@@ -1583,12 +1589,14 @@ public class Minecraft implements IThreadListener, IPlayerUsage
     /**
      * Called when user clicked he's mouse right button (place)
      */
-    private void rightClickMouse()
+    public void rightClickMouse()
     {
         // TODO ici
+        EventClick click = new EventClick(EventClick.ClickType.RIGHT);
+        Xynon.INSTANCE.getEventBus().post(click);
         if (!this.playerController.getIsHittingBlock())
         {
-            this.rightClickDelayTimer = 4;
+            this.rightClickDelayTimer = click.getResetDelay();
             boolean flag = true;
             ItemStack itemstack = this.thePlayer.inventory.getCurrentItem();
 
@@ -2092,9 +2100,17 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 }
             }
 
+            // controls
+            EventRunTick tick = new  EventRunTick();
+            Xynon.INSTANCE.getEventBus().post(tick);
+
+            EventOverrideInput overrideInput = new EventOverrideInput();
+            Xynon.INSTANCE.getEventBus().post(overrideInput);
+
             for (int l = 0; l < 9; ++l)
             {
-                if (this.gameSettings.keyBindsHotbar[l].isPressed())
+                if (this.gameSettings.keyBindsHotbar[l].isPressed() &&
+                        !overrideInput.isChoked(this.gameSettings.keyBindsHotbar[l]))
                 {
                     if (this.thePlayer.isSpectator())
                     {
@@ -2109,7 +2125,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
             boolean flag = this.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN;
 
-            while (this.gameSettings.keyBindInventory.isPressed())
+            while (this.gameSettings.keyBindInventory.isPressed() && !overrideInput.isChoked(this.gameSettings.keyBindInventory))
             {
                 if (this.playerController.isRidingHorse())
                 {
@@ -2122,7 +2138,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 }
             }
 
-            while (this.gameSettings.keyBindDrop.isPressed())
+            while (this.gameSettings.keyBindDrop.isPressed() &&  !overrideInput.isChoked(this.gameSettings.keyBindDrop))
             {
                 if (!this.thePlayer.isSpectator())
                 {
@@ -2130,62 +2146,64 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                 }
             }
 
-            while (this.gameSettings.keyBindChat.isPressed() && flag)
+            while (this.gameSettings.keyBindChat.isPressed() && flag && !overrideInput.isChoked(this.gameSettings.keyBindChat))
             {
                 this.displayGuiScreen(new GuiChat());
             }
 
-            if (this.currentScreen == null && this.gameSettings.keyBindCommand.isPressed() && flag)
+            if (this.currentScreen == null && this.gameSettings.keyBindCommand.isPressed() && flag &&  !overrideInput.isChoked(this.gameSettings.keyBindCommand))
             {
                 this.displayGuiScreen(new GuiChat("/"));
             }
 
             if (this.thePlayer.isUsingItem())
             {
-                if (!this.gameSettings.keyBindUseItem.isKeyDown())
+                if (!this.gameSettings.keyBindUseItem.isKeyDown() && !overrideInput.isChoked(this.gameSettings.keyBindUseItem))
                 {
                     this.playerController.onStoppedUsingItem(this.thePlayer);
                 }
 
-                while (this.gameSettings.keyBindAttack.isPressed())
+                while (this.gameSettings.keyBindAttack.isPressed() && !overrideInput.isChoked(this.gameSettings.keyBindAttack))
                 {
                     ;
                 }
 
-                while (this.gameSettings.keyBindUseItem.isPressed())
+                while (this.gameSettings.keyBindUseItem.isPressed() && !overrideInput.isChoked(this.gameSettings.keyBindUseItem))
                 {
                     ;
                 }
 
-                while (this.gameSettings.keyBindPickBlock.isPressed())
+                while (this.gameSettings.keyBindPickBlock.isPressed() && !overrideInput.isChoked(this.gameSettings.keyBindPickBlock))
                 {
                     ;
                 }
             }
             else
             {
-                while (this.gameSettings.keyBindAttack.isPressed())
+                while (this.gameSettings.keyBindAttack.isPressed() && !overrideInput.isChoked(this.gameSettings.keyBindAttack))
                 {
                     this.clickMouse();
                 }
 
-                while (this.gameSettings.keyBindUseItem.isPressed())
+                while (this.gameSettings.keyBindUseItem.isPressed() && !overrideInput.isChoked(this.gameSettings.keyBindUseItem))
                 {
                     this.rightClickMouse();
                 }
 
-                while (this.gameSettings.keyBindPickBlock.isPressed())
+                while (this.gameSettings.keyBindPickBlock.isPressed() &&  !overrideInput.isChoked(this.gameSettings.keyBindPickBlock))
                 {
                     this.middleClickMouse();
                 }
             }
 
-            if (this.gameSettings.keyBindUseItem.isKeyDown() && this.rightClickDelayTimer == 0 && !this.thePlayer.isUsingItem())
+            if (this.gameSettings.keyBindUseItem.isKeyDown() && this.rightClickDelayTimer == 0 && !this.thePlayer.isUsingItem()
+            && !overrideInput.isChoked(this.gameSettings.keyBindUseItem))
             {
                 this.rightClickMouse();
             }
 
-            this.sendClickBlockToController(this.currentScreen == null && this.gameSettings.keyBindAttack.isKeyDown() && this.inGameHasFocus);
+            // TODO : Fix this for left clicking on blocks while drinking/eating/blocking
+            this.sendClickBlockToController(this.currentScreen == null && (this.gameSettings.keyBindAttack.isKeyDown() && !overrideInput.isChoked(gameSettings.keyBindAttack)) && this.inGameHasFocus);
         }
 
         if (this.theWorld != null)

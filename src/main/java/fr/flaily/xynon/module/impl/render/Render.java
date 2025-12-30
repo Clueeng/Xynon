@@ -3,6 +3,8 @@ package fr.flaily.xynon.module.impl.render;
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.utils.font.CustomFontRenderer;
 public interface Render {
+    default void init()
+    {}
 
     // Inter fonts
     CustomFontRenderer xsmall = Xynon.INSTANCE.getFontManager().getInter().size(12),

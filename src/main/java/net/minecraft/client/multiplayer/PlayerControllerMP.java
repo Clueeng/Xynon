@@ -1,5 +1,7 @@
 package net.minecraft.client.multiplayer;
 
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.module.impl.combat.Reach;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -343,6 +345,10 @@ public class PlayerControllerMP
      */
     public float getBlockReachDistance()
     {
+        Reach reach = Xynon.INSTANCE.getModuleManager().getModule(Reach.class);
+        if(reach.isToggled()) {
+            return (float) Math.max(reach.range.getValue(), 4.5f);
+        }
         return this.currentGameType.isCreative() ? 5.0F : 4.5F;
     }
 

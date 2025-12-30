@@ -51,7 +51,16 @@ public class ColorSetting extends Setting<Integer> {
     public int getAlpha() { return alpha; }
 
     public Color getColor() {
-        return new Color(getValue(), true); // RGB integer from Setting<Integer>
+        return new Color(getValue(), true);
+    }
+    public Integer getRed() {
+        return new Color(getValue(), true).getRed();
+    }
+    public Integer getGreen() {
+        return new Color(getValue(), true).getGreen();
+    }
+    public Integer getBlue() {
+        return new Color(getValue(), true).getBlue();
     }
 
     /* ========== Setters called by ColorPickerFrame ========== */

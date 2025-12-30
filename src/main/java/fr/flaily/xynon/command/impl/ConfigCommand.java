@@ -1,10 +1,12 @@
 package fr.flaily.xynon.command.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.command.Command;
 import fr.flaily.xynon.utils.ConfigUtil;
+import net.minecraft.util.EnumChatFormatting;
 
 public class ConfigCommand extends Command {
 
@@ -14,7 +16,6 @@ public class ConfigCommand extends Command {
 
     @Override
     public void execute(String[] args) {
-        Xynon.INSTANCE.gameLogger().sendLog(Arrays.toString(args));
         if(args.length == 0) return;
 
         String sub = args[0];
@@ -36,11 +37,18 @@ public class ConfigCommand extends Command {
                 }
                 String name = args[1];
                 ConfigUtil.loadConfig(name);
-                    Xynon.INSTANCE.gameLogger().sendLog("Loaded config " + name + ".json");
+                Xynon.INSTANCE.gameLogger().sendLog("Loaded config " + name + ".json");
                 break;
             }
             case "test": {
                 ConfigUtil.loadConfig("test");
+                break;
+            }
+            case "list": {
+                Xynon.INSTANCE.gameLogger().sendLog(EnumChatFormatting.BOLD + "List of saved configs");
+                for(String config : ConfigUtil.getConfigs()) {
+                    Xynon.INSTANCE.gameLogger().sendLog(" - " + config.replace(".json", ""));
+                }
                 break;
             }
             

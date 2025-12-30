@@ -68,7 +68,7 @@ public class XynonMenu extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         // TODO Auto-generated method stub
         super.mouseClicked(mouseX, mouseY, mouseButton);
         for (XynonButton button : buttons) {

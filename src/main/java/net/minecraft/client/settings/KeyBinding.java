@@ -17,9 +17,13 @@ public class KeyBinding implements Comparable<KeyBinding>
     private final String keyCategory;
     private int keyCode;
 
+    public void setPressed(boolean pressed) {
+        this.pressed = pressed;
+    }
+
     /** Is the key held down? */
     public boolean pressed;
-    private int pressTime;
+    public int pressTime;
 
     public static void onTick(int keyCode)
     {

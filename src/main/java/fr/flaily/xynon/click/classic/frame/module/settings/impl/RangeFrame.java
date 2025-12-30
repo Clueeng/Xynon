@@ -24,8 +24,8 @@ public class RangeFrame extends SettingFrame<RangeSetting> implements SettingSty
     public void render(int mouseX, int mouseY, float partialTicks) {
         RangeSetting setting = this.setting;
 
-        double valMin = setting.getValueMin();
-        double valMax = setting.getValueMax();
+        double valMin = setting.getValueLow();
+        double valMax = setting.getValueHigh();
 
         double min = setting.minimum;
         double max = setting.maximum;
@@ -55,9 +55,9 @@ public class RangeFrame extends SettingFrame<RangeSetting> implements SettingSty
             double distToMax = Math.abs(relativeMouseX - fillMax);
 
             if (distToMin <= distToMax) {
-                setting.setValueMin(min + (max - min) * percent);
+                setting.setValueLow(min + (max - min) * percent);
             } else {
-                setting.setValueMax(min + (max - min) * percent);
+                setting.setValueHigh(min + (max - min) * percent);
             }
         }
     }

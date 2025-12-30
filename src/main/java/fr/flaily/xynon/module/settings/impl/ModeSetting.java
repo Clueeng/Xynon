@@ -48,6 +48,11 @@ public class ModeSetting extends Setting<String> {
         }
     }
 
+    @Override
+    public String getValue() {
+        return getCurrent();
+    }
+
     private Runnable onUpdate;
     public void onValueUpdate(Runnable runnable) {
         onUpdate = runnable;

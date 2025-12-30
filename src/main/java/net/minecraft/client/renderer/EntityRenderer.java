@@ -10,6 +10,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
+
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.render.WorldRenderEvent;
+import fr.flaily.xynon.module.ModuleManager;
+import fr.flaily.xynon.module.impl.combat.Reach;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.material.Material;
@@ -459,113 +464,97 @@ public class EntityRenderer implements IResourceManagerReloadListener
     /**
      * Finds what block or object the mouse is over at the specified partial tick time. Args: partialTickTime
      */
-    public void getMouseOver(float partialTicks)
-    {
+    public void getMouseOver(float partialTicks) {
         Entity entity = this.mc.getRenderViewEntity();
 
-        if (entity != null && this.mc.theWorld != null)
-        {
+        if (entity != null && this.mc.theWorld != null) {
             this.mc.mcProfiler.startSection("pick");
+            // Reset the pointed entity
             this.mc.pointedEntity = null;
-            double d0 = (double)this.mc.playerController.getBlockReachDistance();
-            this.mc.objectMouseOver = entity.rayTrace(d0, partialTicks);
-            double d1 = d0;
-            Vec3 vec3 = entity.getPositionEyes(partialTicks);
-            boolean flag = false;
-            int i = 3;
+            double blockReachDistance = this.mc.playerController.getBlockReachDistance();
+            this.mc.objectMouseOver = entity.rayTrace(blockReachDistance, partialTicks);
+            double distanceFromEyePos = blockReachDistance;
+            Vec3 eyePosition = entity.getPositionEyes(partialTicks);
+            boolean missed = false;
 
-            if (this.mc.playerController.extendedReach())
-            {
-                d0 = 6.0D;
-                d1 = 6.0D;
-            }
-            else if (d0 > 3.0D)
-            {
-                flag = true;
-            }
+            Reach reach = Xynon.INSTANCE.getModuleManager().getModule(Reach.class);
+            double overrideRange = reach.isToggled() ? reach.range.getValue() : 3.0D;
 
-            if (this.mc.objectMouseOver != null)
-            {
-                d1 = this.mc.objectMouseOver.hitVec.distanceTo(vec3);
+            if (this.mc.playerController.extendedReach()) {
+                blockReachDistance = 6.0D;
+                distanceFromEyePos = 6.0D;
+            } else if (blockReachDistance > overrideRange) {
+                missed = true;
             }
 
-            Vec3 vec31 = entity.getLook(partialTicks);
-            Vec3 vec32 = vec3.addVector(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0);
-            this.pointedEntity = null;
-            Vec3 vec33 = null;
-            float f = 1.0F;
-            List<Entity> list = this.mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand((double)f, (double)f, (double)f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
-            {
-                public boolean apply(Entity p_apply_1_)
-                {
-                    return p_apply_1_.canBeCollidedWith();
-                }
-            }));
-            double d2 = d1;
+            // Calculates the distance between the current hovered object and the player's eyes vectorl
+            if (this.mc.objectMouseOver != null) {
+                distanceFromEyePos = this.mc.objectMouseOver.hitVec.distanceTo(eyePosition);
+            }
 
-            for (int j = 0; j < list.size(); ++j)
-            {
-                Entity entity1 = (Entity)list.get(j);
-                float f1 = entity1.getCollisionBorderSize();
-                AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double)f1, (double)f1, (double)f1);
-                MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
+            Vec3 entityLook = entity.getLook(partialTicks);
+            Vec3 reachVector = eyePosition.addVector(entityLook.xCoord * blockReachDistance, entityLook.yCoord * blockReachDistance, entityLook.zCoord * blockReachDistance);
+            // Get all the entities within the reach of the player
+            // (a big box around the player of 4.5 blocks, or 6 blocks in creative)
+            float expandSize = 1.0F;
+            List<Entity> worldEntitiesInAABB = this.mc.theWorld.getEntitiesInAABBexcluding(entity,
+                    entity.getEntityBoundingBox()
+                            .addCoord(entityLook.xCoord * blockReachDistance,
+                            entityLook.yCoord * blockReachDistance,
+                            entityLook.zCoord * blockReachDistance)
+                            .expand(expandSize, expandSize, expandSize), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
+            double eyeToObject = distanceFromEyePos;
 
-                if (axisalignedbb.isVecInside(vec3))
-                {
-                    if (d2 >= 0.0D)
-                    {
-                        this.pointedEntity = entity1;
-                        vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
-                        d2 = 0.0D;
+            Vec3 overObjectHitVec = null;
+            for (int entityIndex = 0; entityIndex < worldEntitiesInAABB.size(); ++entityIndex) {
+                Entity lookedEntity = worldEntitiesInAABB.get(entityIndex);
+                float collisionBorderSize = lookedEntity.getCollisionBorderSize();
+                AxisAlignedBB entityBox = lookedEntity.getEntityBoundingBox().expand(collisionBorderSize, collisionBorderSize, collisionBorderSize);
+                MovingObjectPosition movingobjectposition = entityBox.calculateIntercept(eyePosition, reachVector);
+
+                if (entityBox.isVecInside(eyePosition)) {
+                    if (eyeToObject >= 0.0D) {
+                        this.pointedEntity = lookedEntity;
+                        overObjectHitVec = movingobjectposition == null ? eyePosition : movingobjectposition.hitVec;
+                        eyeToObject = 0.0D;
                     }
-                }
-                else if (movingobjectposition != null)
-                {
-                    double d3 = vec3.distanceTo(movingobjectposition.hitVec);
+                } else if (movingobjectposition != null) {
+                    double distEyeToObject = eyePosition.distanceTo(movingobjectposition.hitVec);
 
-                    if (d3 < d2 || d2 == 0.0D)
-                    {
-                        boolean flag1 = false;
-
-                        if (Reflector.ForgeEntity_canRiderInteract.exists())
-                        {
-                            flag1 = Reflector.callBoolean(entity1, Reflector.ForgeEntity_canRiderInteract, new Object[0]);
+                    if (distEyeToObject < eyeToObject || eyeToObject == 0.0D) {
+                        boolean canRiderInteract = false;
+                        if (Reflector.ForgeEntity_canRiderInteract.exists()) {
+                            canRiderInteract = Reflector.callBoolean(lookedEntity, Reflector.ForgeEntity_canRiderInteract);
                         }
 
-                        if (!flag1 && entity1 == entity.ridingEntity)
-                        {
-                            if (d2 == 0.0D)
-                            {
-                                this.pointedEntity = entity1;
-                                vec33 = movingobjectposition.hitVec;
+                        if (!canRiderInteract && lookedEntity == entity.ridingEntity) {
+                            if (eyeToObject == 0.0D) {
+                                this.pointedEntity = lookedEntity;
+                                overObjectHitVec = movingobjectposition.hitVec;
                             }
-                        }
-                        else
-                        {
-                            this.pointedEntity = entity1;
-                            vec33 = movingobjectposition.hitVec;
-                            d2 = d3;
+                        } else {
+                            this.pointedEntity = lookedEntity;
+                            overObjectHitVec = movingobjectposition.hitVec;
+                            eyeToObject = distEyeToObject;
                         }
                     }
                 }
             }
 
-            if (this.pointedEntity != null && flag && vec3.distanceTo(vec33) > 3.0D)
-            {
-                this.pointedEntity = null;
-                this.mc.objectMouseOver = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, vec33, (EnumFacing)null, new BlockPos(vec33));
+            if(overObjectHitVec != null) {
+                if (this.pointedEntity != null && missed && eyePosition.distanceTo(overObjectHitVec) > overrideRange) {
+                    this.pointedEntity = null;
+                    this.mc.objectMouseOver = new MovingObjectPosition(MovingObjectPosition.MovingObjectType.MISS, overObjectHitVec, null, new BlockPos(overObjectHitVec));
+                }
             }
 
-            if (this.pointedEntity != null && (d2 < d1 || this.mc.objectMouseOver == null))
-            {
-                this.mc.objectMouseOver = new MovingObjectPosition(this.pointedEntity, vec33);
+            if (this.pointedEntity != null && (eyeToObject < distanceFromEyePos || this.mc.objectMouseOver == null)) {
+                this.mc.objectMouseOver = new MovingObjectPosition(this.pointedEntity, overObjectHitVec);
 
-                if (this.pointedEntity instanceof EntityLivingBase || this.pointedEntity instanceof EntityItemFrame)
-                {
+                if (this.pointedEntity instanceof EntityLivingBase || this.pointedEntity instanceof EntityItemFrame) {
                     this.mc.pointedEntity = this.pointedEntity;
                 }
             }
-
             this.mc.mcProfiler.endSection();
         }
     }
@@ -1889,6 +1878,9 @@ public class EntityRenderer implements IResourceManagerReloadListener
             this.mc.mcProfiler.endStartSection("aboveClouds");
             this.renderCloudsCheck(renderglobal, partialTicks, pass);
         }
+
+        WorldRenderEvent event = new WorldRenderEvent(partialTicks);
+        Xynon.INSTANCE.getEventBus().post(event);
 
         if (Reflector.ForgeHooksClient_dispatchRenderLast.exists())
         {

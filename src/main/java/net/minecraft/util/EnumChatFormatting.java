@@ -56,7 +56,7 @@ public enum EnumChatFormatting
     /** The numerical index that represents this color */
     private final int colorIndex;
 
-    private static String func_175745_c(String p_175745_0_)
+    public static String strip(String p_175745_0_)
     {
         return p_175745_0_.toLowerCase().replaceAll("[^a-z]", "");
     }
@@ -130,7 +130,7 @@ public enum EnumChatFormatting
      */
     public static EnumChatFormatting getValueByName(String friendlyName)
     {
-        return friendlyName == null ? null : (EnumChatFormatting)nameMapping.get(func_175745_c(friendlyName));
+        return friendlyName == null ? null : (EnumChatFormatting)nameMapping.get(strip(friendlyName));
     }
 
     public static EnumChatFormatting func_175744_a(int p_175744_0_)
@@ -171,7 +171,7 @@ public enum EnumChatFormatting
     static {
         for (EnumChatFormatting enumchatformatting : values())
         {
-            nameMapping.put(func_175745_c(enumchatformatting.name), enumchatformatting);
+            nameMapping.put(strip(enumchatformatting.name), enumchatformatting);
         }
     }
 }

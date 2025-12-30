@@ -1,6 +1,7 @@
 package fr.flaily.xynon.module.impl.render;
 
 import best.azura.eventbus.handler.EventHandler;
+import com.google.common.util.concurrent.AtomicDouble;
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.render.ScreenEvent;
 import fr.flaily.xynon.module.FeatureInfo;
@@ -11,6 +12,8 @@ import fr.flaily.xynon.module.settings.impl.MultiSelectSetting;
 import fr.flaily.xynon.utils.BlurRenderer;
 import fr.flaily.xynon.utils.render.ColorUtils;
 import fr.flaily.xynon.utils.render.RenderUtil;
+import fr.flaily.xynon.utils.render.shader.ShaderUtil;
+import fr.flaily.xynon.utils.render.shader.impl.Bloom;
 import fr.flaily.xynon.utils.render.shader.impl.GaussianBlur;
 import fr.flaily.xynon.utils.render.shader.impl.LSDShader;
 import net.minecraft.client.gui.Gui;
@@ -37,33 +40,26 @@ public class HUD extends Module implements Render {
 
     public int hudColor;
 
-    Framebuffer blurBuffer = null;
+    private AtomicDouble testPos = new  AtomicDouble(0);
 
     @EventHandler
     public void onRender(ScreenEvent event) {
         if(components.isSelected("Watermark")) {
             String watermark = "Xynon";
-            mc.fontRendererObj.drawStringWithShadow(watermark, 6, 6, -1);
+            double x = 6;
+            double y = 6;
+            double width = 100;
+            double height = 100;
+            double radius = 13;
 
-
-
-
-            blurBuffer = RenderUtil.createFrameBuffer(blurBuffer);
-            blurBuffer.bindFramebuffer(true);
-
-            GlStateManager.clearColor(0, 0, 0, 0);
-            GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT);
-
-            // To be blurred
-
-            // 1. Blur entire screen
-            GaussianBlur.renderBlur(50.0f);
-            RenderUtil.drawRoundedRect(4, 4, 100, 100, 12, new Color(0, 0, 0, 80).getRGB());
-
-            blurBuffer.unbindFramebuffer();
-
-            mc.getFramebuffer().bindFramebuffer(true);
-
+            // 1. Render the Blur, passing the shape as a lambda
+            // This code defines the SHAPE of the blur
+            // The color doesn't matter (stencil only cares about pixels being drawn),
+            // but set alpha to -1 (white) to be safe.
+//            RenderUtil.drawRoundedRect(x, y, width, height, radius, new Color(0, 0, 0, 100).getRGB());
+//            GaussianBlur.renderBlur(15f, () -> {
+//                RenderUtil.drawRoundedRect(x, y, width, height, radius, -1);
+//            });
 
             mc.fontRendererObj.drawStringWithShadow(watermark, 6, 6, -1);
         }
@@ -80,6 +76,9 @@ public class HUD extends Module implements Render {
             }
             case "Double": {
                 return ColorUtils.blendThing(2F, (long) moduleOffset * 160, mainColor.getColor(), accentColor.getColor());
+            }
+            case "Astolfo": {
+                return ColorUtils.astolfo(5f, 0.6f, 1.0f, (long) moduleOffset * 160);
             }
         }
         return -1;
@@ -99,18 +98,69 @@ public class HUD extends Module implements Render {
         ArrayList<Module> sort = Xynon.INSTANCE.getModuleManager().lengthSortedModules(big, test);
         java.util.List<Module> shown = Xynon.INSTANCE.getModuleManager().lengthSortedModules(big, test).stream().filter(m -> m.getModAnimation().getValue() >= 0.01f).toList();
 
+//        Bloom.renderBloom(4f, new Color(0, 0, 0, 90).getRGB(), () -> {
+//            GaussianBlur.renderBlur(13f, () -> {
+//                float blurPos = 0.0f + padding;
+//                for(Module module : sort) {
+//                    if(module.getModAnimation().getValue() < 0.01f) continue;
+//                    float anim = module.getModAnimation().getValue();
+//
+//                    float modLength = big.getWidth(module.getListName()) * anim;
+//                    float moduleX = xPos - modLength;
+//                    int rectOffset = rectMode.is("Right") ? 3 : 0;
+//
+//                    Gui.drawRect(moduleX - margin - (rectOffset / 2f), blurPos, moduleX + modLength, blurPos + (height) * anim,
+//                            new Color(0, 0, 0, 110).getRGB());
+//
+//                    blurPos += (height) * anim;
+//                }
+//            });
+//        });
+        Runnable arrayListShape = () -> {
+            float currentY = 0.0f + padding;
+            for (Module module : sort) {
+                if (module.getModAnimation().getValue() < 0.01f) continue;
+                float anim = module.getModAnimation().getValue();
+                float modLength = big.getWidth(module.getListName()) * anim;
+                float moduleX = xPos - modLength;
+                int rectOffset = rectMode.is("Right") ? 3 : 0;
+
+                // Draw the rectangle area.
+                // Note: Use white (-1) for the shader mask pass
+                Gui.drawRect(moduleX - margin - (rectOffset / 2f), currentY,
+                        moduleX + modLength, currentY + (height * anim), -1);
+
+                currentY += (height * anim);
+            }
+        };
+        // 1. Render a LARGE, soft shadow.
+        // Radius 12f-18f is the "sweet spot" for that floating look.
+        if(rectMode.is("Right") || rectMode.is("None")) {
+            Bloom.renderBloom(4f, new Color(0, 0, 0, 150).getRGB(), arrayListShape);
+        }
+
+        // 2. Render the blur
+        GaussianBlur.renderBlur(13f, arrayListShape);
+
+
         for(Module module : sort) {
             if(module.getModAnimation().getValue() < 0.01f) continue;
             float anim = module.getModAnimation().getValue();
+            testPos.set(yPos);
 
             this.hudColor = getColor(index);
             float modLength = big.getWidth(module.getListName()) * anim;
             float moduleX = xPos - modLength;
-            int rectOffset = rectMode.is("Right") ? 6 : 0;
+            int rectOffset = rectMode.is("Right") ? 3 : 0;
 
             Gui.drawRect(moduleX - margin - (rectOffset / 2f), yPos, moduleX + modLength, yPos + (height) * anim,
                     new Color(0, 0, 0, 110).getRGB());
-            big.drawStringWithShadow(module.getListName(), moduleX - (margin / 2) - (rectOffset / 2f), yPos + (lineHeight / 2f), this.hudColor);
+
+
+//            Bloom.renderBloom(13f, new Color(0, 0, 0, 90).getRGB(), () -> {
+//                big.drawStringWithShadow(module.getListName(), moduleX - (margin / 2) - (rectOffset / 2f), testPos.floatValue() + (lineHeight / 2f), this.hudColor);
+//            });
+            big.drawStringWithShadow(module.getListName(), moduleX - (margin / 2) - (rectOffset / 2f), testPos.floatValue() + (lineHeight / 2f), this.hudColor);
 
             // Rectangle
             if(rectMode.is("Outline")) {
@@ -133,16 +183,15 @@ public class HUD extends Module implements Render {
                     lineY - 1, moduleX + modLength,
                     lineY, this.hudColor);
                 }
-                
-                
             }
             if(rectMode.is("Left") || rectMode.is("Outline")) {
                 Gui.drawRect(moduleX - margin - 1, yPos, moduleX - margin, yPos + (height) * anim, this.hudColor);
             }
 
             if(rectMode.is("Right")) {
-                Gui.drawRect(event.getSr().getScaledWidth() - margin, yPos, 
-                event.getSr().getScaledWidth() - margin + 1, yPos + (height * anim), hudColor);
+                int fix = 2;
+                Gui.drawRect(event.getSr().getScaledWidth() - margin + fix, yPos,
+                event.getSr().getScaledWidth() - margin + 1 + fix, yPos + (height * anim), hudColor);
             }
 
 

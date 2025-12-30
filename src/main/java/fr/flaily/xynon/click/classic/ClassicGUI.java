@@ -61,7 +61,7 @@ public class ClassicGUI extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         frames.forEach(f -> f.mouseClicked(mouseX, mouseY, mouseButton));

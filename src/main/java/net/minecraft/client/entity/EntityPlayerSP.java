@@ -978,10 +978,10 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
     @Override
     public Vec3 getLookVec() {
-        // float f = this.prevServerPitch + (this.serverPitch - this.prevServerPitch) * 1.0F;
-        // float f1 = this.prevServerYaw + (this.serverYaw - this.prevServerYaw) * 1.0F;
-        // return this.getVectorForRotation(f, f1);
-        return super.getLookVec();
+         float f = this.prevServerPitch + (this.serverPitch - this.prevServerPitch);
+         float f1 = this.prevServerYaw + (this.serverYaw - this.prevServerYaw);
+         return this.getVectorForRotation(f, f1);
+//        return super.getLookVec();
     }
 
     @Override

@@ -1,16 +1,11 @@
 package fr.flaily.xynon.utils;
 
-import java.awt.List;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.bouncycastle.jcajce.provider.asymmetric.dsa.DSASigner.stdDSA;
-
-import com.google.common.collect.RangeSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -27,13 +22,29 @@ import fr.flaily.xynon.module.settings.impl.ModeSetting;
 import fr.flaily.xynon.module.settings.impl.MultiSelectSetting;
 import fr.flaily.xynon.module.settings.impl.NumberSetting;
 import fr.flaily.xynon.module.settings.impl.RangeSetting;
-import lombok.val;
 
 public class ConfigUtil {
 
     public static File configFolder = new File(Xynon.INSTANCE.clientFolder, "configs");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
+    public static ArrayList<String> getConfigs() {
+        ArrayList<String> configs = new ArrayList<>();
+        if (!configFolder.exists()) {
+            configFolder.mkdirs();
+            return configs;
+        }
+
+        File[] files = configFolder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    configs.add(file.getName());
+                }
+            }
+        }
+        return configs;
+    }
 
     public static void saveConfig(String configName) {
         if (!configFolder.exists()) configFolder.mkdirs();
@@ -58,8 +69,8 @@ public class ConfigUtil {
                     for (String selected : multi.getSelectedOptions()) values.add(selected);
                     settingObj.add("value", values);
                 } else if (setting instanceof RangeSetting range) {
-                    settingObj.addProperty("min", range.getValueMin());
-                    settingObj.addProperty("max", range.getValueMax());
+                    settingObj.addProperty("min", range.getValueLow());
+                    settingObj.addProperty("max", range.getValueHigh());
                 } else if (setting instanceof ColorSetting color) {
                     settingObj.addProperty("value", color.getValue());
                 } else {
@@ -121,8 +132,8 @@ public class ConfigUtil {
                                 // well i dont think its best code but oh well
                                 double min = sObj.get("min").getAsDouble();
                                 double max = sObj.get("max").getAsDouble();
-                                rangeSetting.setValueMax(max);
-                                rangeSetting.setValueMin(min);
+                                rangeSetting.setValueHigh(max);
+                                rangeSetting.setValueLow(min);
 
                             }else {
                                 applySettingValue(setting, value);

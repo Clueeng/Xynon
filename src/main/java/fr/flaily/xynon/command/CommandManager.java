@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import fr.flaily.xynon.command.impl.ConfigCommand;
+import fr.flaily.xynon.command.impl.NotificationCommand;
 import lombok.Getter;
 
 public class CommandManager {
@@ -14,6 +15,7 @@ public class CommandManager {
 
     public CommandManager() {
         commands.add(new ConfigCommand());
+        commands.add(new NotificationCommand());
     }
 
     public Command getCommand(String name) {

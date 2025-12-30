@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.notification.impl.list.AppleNotification;
 import fr.flaily.xynon.screen.main.XynonTextField;
 import fr.flaily.xynon.utils.alts.Alt;
 import fr.flaily.xynon.utils.alts.impl.ComboAlt;
@@ -108,6 +109,7 @@ public class GuiAltManager extends GuiScreen {
                 // Select this alt
                 System.out.println("Selected alt: " + alt);
                 alt.login();
+                Xynon.INSTANCE.getNotificationManager().add(new AppleNotification("Alt Manager", "Logging into " + alt.username, 2500L));
             }
         }
 
@@ -270,7 +272,7 @@ public class GuiAltManager extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         // TODO Auto-generated method stub
         super.mouseClicked(mouseX, mouseY, mouseButton);
         usernameField.mouseClicked(mouseX, mouseY, mouseButton);
