@@ -1719,12 +1719,17 @@ public class EntityRenderer implements IResourceManagerReloadListener
                 Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(0)});
             }
 
+            WorldRenderEvent event = new WorldRenderEvent(partialTicks);
+            Xynon.INSTANCE.getEventBus().post(event);
+
             renderglobal.renderEntities(entity, icamera, partialTicks);
 
             if (Reflector.ForgeHooksClient_setRenderPass.exists())
             {
                 Reflector.callVoid(Reflector.ForgeHooksClient_setRenderPass, new Object[] {Integer.valueOf(-1)});
             }
+
+//            RenderGlobal.drawOutlinedBoundingBox();
 
             RenderHelper.disableStandardItemLighting();
             this.disableLightmap();
@@ -1878,9 +1883,6 @@ public class EntityRenderer implements IResourceManagerReloadListener
             this.mc.mcProfiler.endStartSection("aboveClouds");
             this.renderCloudsCheck(renderglobal, partialTicks, pass);
         }
-
-        WorldRenderEvent event = new WorldRenderEvent(partialTicks);
-        Xynon.INSTANCE.getEventBus().post(event);
 
         if (Reflector.ForgeHooksClient_dispatchRenderLast.exists())
         {

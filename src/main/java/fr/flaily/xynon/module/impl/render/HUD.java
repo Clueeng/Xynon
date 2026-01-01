@@ -44,28 +44,25 @@ public class HUD extends Module implements Render {
 
     @EventHandler
     public void onRender(ScreenEvent event) {
+        if(components.isSelected("ArrayList")) {
+            drawArrayList(event);
+        }
         if(components.isSelected("Watermark")) {
-            String watermark = "Xynon";
+            String watermark = "Xynon - 1.0" ;
             double x = 6;
             double y = 6;
             double width = 100;
             double height = 100;
             double radius = 13;
 
-            // 1. Render the Blur, passing the shape as a lambda
-            // This code defines the SHAPE of the blur
-            // The color doesn't matter (stencil only cares about pixels being drawn),
-            // but set alpha to -1 (white) to be safe.
-//            RenderUtil.drawRoundedRect(x, y, width, height, radius, new Color(0, 0, 0, 100).getRGB());
-//            GaussianBlur.renderBlur(15f, () -> {
-//                RenderUtil.drawRoundedRect(x, y, width, height, radius, -1);
-//            });
+            Runnable watermarkShape = () -> {
+                RenderUtil.drawRoundedRect3(x, y, x + big.getWidth(watermark) + 2, y + big.getHeight(watermark) + 2, 12f, -1);
+            };
+            Bloom.renderBloom(4f, new Color(0, 0, 0, 150).getRGB(), watermarkShape);
+            GaussianBlur.renderBlur(13f, watermarkShape);
+//            fr.drawStringWithShadow(watermark, (float) x, (float) y, -1);
+            big.drawStringWithShadow(watermark, (float) x + 4, (float) y + 4, -1);
 
-            mc.fontRendererObj.drawStringWithShadow(watermark, 6, 6, -1);
-        }
-
-        if(components.isSelected("ArrayList")) {
-            drawArrayList(event);
         }
     }
 
@@ -98,24 +95,6 @@ public class HUD extends Module implements Render {
         ArrayList<Module> sort = Xynon.INSTANCE.getModuleManager().lengthSortedModules(big, test);
         java.util.List<Module> shown = Xynon.INSTANCE.getModuleManager().lengthSortedModules(big, test).stream().filter(m -> m.getModAnimation().getValue() >= 0.01f).toList();
 
-//        Bloom.renderBloom(4f, new Color(0, 0, 0, 90).getRGB(), () -> {
-//            GaussianBlur.renderBlur(13f, () -> {
-//                float blurPos = 0.0f + padding;
-//                for(Module module : sort) {
-//                    if(module.getModAnimation().getValue() < 0.01f) continue;
-//                    float anim = module.getModAnimation().getValue();
-//
-//                    float modLength = big.getWidth(module.getListName()) * anim;
-//                    float moduleX = xPos - modLength;
-//                    int rectOffset = rectMode.is("Right") ? 3 : 0;
-//
-//                    Gui.drawRect(moduleX - margin - (rectOffset / 2f), blurPos, moduleX + modLength, blurPos + (height) * anim,
-//                            new Color(0, 0, 0, 110).getRGB());
-//
-//                    blurPos += (height) * anim;
-//                }
-//            });
-//        });
         Runnable arrayListShape = () -> {
             float currentY = 0.0f + padding;
             for (Module module : sort) {

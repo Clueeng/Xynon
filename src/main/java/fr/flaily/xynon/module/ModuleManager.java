@@ -10,6 +10,7 @@ import fr.flaily.xynon.module.impl.movement.Flight;
 import fr.flaily.xynon.module.impl.player.FastPlace;
 import fr.flaily.xynon.module.impl.player.Noslow;
 import fr.flaily.xynon.module.impl.player.Sprint;
+import fr.flaily.xynon.module.impl.player.scaffold.Scaffold;
 import fr.flaily.xynon.module.impl.render.*;
 import fr.flaily.xynon.utils.font.CustomFontRenderer;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,6 +32,7 @@ public class ModuleManager {
 //        register(new TestModule());
 //        register(new TestModule());
 //        register(new TestModule());
+        register(new Scaffold());
         register(new ClickGUI());
         register(new Flight());
         register(new TestModule());

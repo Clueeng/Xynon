@@ -50,6 +50,11 @@ public class BlockPos extends Vec3i
         return x == 0.0D && y == 0.0D && z == 0.0D ? this : new BlockPos((double)this.getX() + x, (double)this.getY() + y, (double)this.getZ() + z);
     }
 
+    public Vec3 getCenter() {
+        return new Vec3(this.getX() + 0.5, this.getY() + 0.5, this.getZ() + .5);
+    }
+
+
     /**
      * Add the given coordinates to the coordinates of this BlockPos
      */
@@ -184,6 +189,10 @@ public class BlockPos extends Vec3i
     public BlockPos offset(EnumFacing facing, int n)
     {
         return n == 0 ? this : new BlockPos(this.getX() + facing.getFrontOffsetX() * n, this.getY() + facing.getFrontOffsetY() * n, this.getZ() + facing.getFrontOffsetZ() * n);
+    }
+
+    public BlockPos offset(int x, int y, int z){
+        return x == 0 && y == 0 && z == 0 ? this : new BlockPos(getX() + x, getY() + y, getZ() + z);
     }
 
     /**
