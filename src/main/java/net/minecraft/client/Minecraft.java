@@ -372,7 +372,7 @@ public class Minecraft implements IThreadListener, IPlayerUsage
 
     /** holds the current fps */
     int fpsCounter;
-    long prevFrameTime = -1L;
+    public long prevFrameTime = -1L;
 
     /** Profiler currently displayed in the debug screen pie chart */
     private String debugProfilerName = "root";

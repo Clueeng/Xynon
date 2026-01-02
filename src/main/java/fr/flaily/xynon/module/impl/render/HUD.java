@@ -1,6 +1,7 @@
 package fr.flaily.xynon.module.impl.render;
 
 import best.azura.eventbus.handler.EventHandler;
+import com.google.common.collect.Queues;
 import com.google.common.util.concurrent.AtomicDouble;
 import fr.flaily.xynon.Xynon;
 import fr.flaily.xynon.events.render.ScreenEvent;
@@ -23,6 +24,7 @@ import net.minecraft.client.shader.Framebuffer;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Queue;
 
 import org.lwjgl.opengl.GL11;
 
@@ -30,7 +32,7 @@ import org.lwjgl.opengl.GL11;
 public class HUD extends Module implements Render {
 
     public MultiSelectSetting components = multi(
-            "Components", Arrays.asList("ArrayList", "Watermark"), Arrays.asList("ArrayList", "Watermark"), () -> true
+            "Components", Arrays.asList("ArrayList", "Watermark", "Debug"), Arrays.asList("ArrayList", "Watermark", "Debug"), () -> true
     );
 
     public ModeSetting rectMode = mode("Rect", "None", () -> components.isSelected("ArrayList"), "None", "Left", "Right", "Outline");
@@ -41,6 +43,14 @@ public class HUD extends Module implements Render {
     public int hudColor;
 
     private AtomicDouble testPos = new  AtomicDouble(0);
+
+    private long lastFrameTime;
+    Queue<Long> frameQueue = Queues.newArrayDeque();
+
+    private static final int MAX_SAMPLES = 1800;
+    private final float[] frameTimes = new float[MAX_SAMPLES];
+    private int frameIndex = 0;
+    private int frameCount = 0;
 
     @EventHandler
     public void onRender(ScreenEvent event) {
@@ -63,6 +73,21 @@ public class HUD extends Module implements Render {
 //            fr.drawStringWithShadow(watermark, (float) x, (float) y, -1);
             big.drawStringWithShadow(watermark, (float) x + 4, (float) y + 4, -1);
 
+        }
+        if(components.isSelected("Debug")) {
+            long ms = System.currentTimeMillis();
+            long frameTime = ms - lastFrameTime;
+
+            String fps = "Last frame: " + (frameTime) + "ms";
+            fr.drawStringWithShadow(fps, 4, 4, -1);
+            drawFrameTimeGraph(4, 300);
+
+            frameTimes[frameIndex] = frameTime;
+            frameIndex = (frameIndex + 1) % MAX_SAMPLES;
+            frameCount = Math.min(frameCount + 1, MAX_SAMPLES);
+
+
+            lastFrameTime = ms;
         }
     }
 
@@ -178,4 +203,39 @@ public class HUD extends Module implements Render {
             index++;
         }
     }
+
+    private void drawFrameTimeGraph(int x, int y) {
+        int width = 300;
+        int height = 100;
+
+        float maxMs = 20f;
+
+        // background
+        RenderUtil.drawRect(x, y - height, x + width, y, 0x90000000);
+
+        int samples = frameCount;
+        if (samples < 2) return;
+
+        for (int i = 0; i < width; i++) {
+            int sampleIndex = (frameIndex - 1 - i + MAX_SAMPLES) % MAX_SAMPLES;
+            float ms = Math.min(frameTimes[sampleIndex], maxMs);
+
+            float normalized = ms / maxMs;
+            int barHeight = (int) (normalized * height);
+
+            int color =
+                    ms < 6   ? 0xFF00FF00 : // good
+                            ms < 10  ? 0xFFFFFF00 : // ok
+                                    0xFFFF0000; // bad
+
+            RenderUtil.drawRect(
+                    x + width - i,
+                    y - barHeight,
+                    x + width - i + 1,
+                    y,
+                    color
+            );
+        }
+    }
+
 }

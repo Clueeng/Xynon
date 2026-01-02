@@ -48,6 +48,7 @@ public class ModuleManager {
         register(new Tracers());
         register(new Chams());
         register(new Animations());
+        register(new BedInfo());
 
         Xynon.INSTANCE.debugLogger().sendLog("Finished registering modules");
     }
