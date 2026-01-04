@@ -55,7 +55,7 @@ public class RenderCreeper extends RenderLiving<EntityCreeper>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityCreeper entity)
+    public ResourceLocation getEntityTexture(EntityCreeper entity)
     {
         return creeperTextures;
     }

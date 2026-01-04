@@ -21,7 +21,7 @@ public class RenderSilverfish extends RenderLiving<EntitySilverfish>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntitySilverfish entity)
+    public ResourceLocation getEntityTexture(EntitySilverfish entity)
     {
         return silverfishTextures;
     }

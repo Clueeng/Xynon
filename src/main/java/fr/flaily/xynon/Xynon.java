@@ -64,7 +64,6 @@ public enum Xynon {
     Things to add to Xynon
 AutoPotion (would prob require some utility event like InputOverrideEvent to prevent the player from clicking keys when modules takeover)
 AutoRefill (Can we simulate mouse movements and clicks in java?)
-BedInfo
 Bedwars Overlay (Minimal)
 
 ViaVersion impl maybe

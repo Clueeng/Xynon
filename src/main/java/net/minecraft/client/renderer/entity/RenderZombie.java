@@ -63,7 +63,7 @@ public class RenderZombie extends RenderBiped<EntityZombie>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityZombie entity)
+    public ResourceLocation getEntityTexture(EntityZombie entity)
     {
         return entity.isVillager() ? zombieVillagerTextures : zombieTextures;
     }

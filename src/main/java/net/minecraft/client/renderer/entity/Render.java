@@ -84,7 +84,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected abstract ResourceLocation getEntityTexture(T entity);
+    public abstract ResourceLocation getEntityTexture(T entity);
 
     protected boolean bindEntityTexture(T entity)
     {

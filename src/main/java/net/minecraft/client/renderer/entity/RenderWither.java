@@ -30,7 +30,7 @@ public class RenderWither extends RenderLiving<EntityWither>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityWither entity)
+    public ResourceLocation getEntityTexture(EntityWither entity)
     {
         int i = entity.getInvulTime();
         return i > 0 && (i > 80 || i / 5 % 2 != 1) ? invulnerableWitherTextures : witherTextures;

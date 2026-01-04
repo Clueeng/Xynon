@@ -91,7 +91,7 @@ public class RenderXPOrb extends Render<EntityXPOrb>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityXPOrb entity)
+    public ResourceLocation getEntityTexture(EntityXPOrb entity)
     {
         return experienceOrbTextures;
     }

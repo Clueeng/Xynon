@@ -54,7 +54,7 @@ public class RenderBoat extends Render<EntityBoat>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityBoat entity)
+    public ResourceLocation getEntityTexture(EntityBoat entity)
     {
         return boatTextures;
     }

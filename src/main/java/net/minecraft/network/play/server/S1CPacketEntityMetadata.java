@@ -9,7 +9,7 @@ import net.minecraft.network.play.INetHandlerPlayClient;
 
 public class S1CPacketEntityMetadata implements Packet<INetHandlerPlayClient>
 {
-    private int entityId;
+    public int entityId;
     private List<DataWatcher.WatchableObject> field_149378_b;
 
     public S1CPacketEntityMetadata()

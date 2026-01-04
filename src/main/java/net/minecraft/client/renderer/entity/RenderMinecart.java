@@ -113,7 +113,7 @@ public class RenderMinecart<T extends EntityMinecart> extends Render<T>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(T entity)
+    public ResourceLocation getEntityTexture(T entity)
     {
         return minecartTextures;
     }

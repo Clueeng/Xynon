@@ -147,7 +147,7 @@ public class RenderDragon extends RenderLiving<EntityDragon>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityDragon entity)
+    public ResourceLocation getEntityTexture(EntityDragon entity)
     {
         return enderDragonTextures;
     }

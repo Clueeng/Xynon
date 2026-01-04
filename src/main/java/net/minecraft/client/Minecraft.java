@@ -25,6 +25,7 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.click.pvp.PvpGUI;
 import fr.flaily.xynon.events.game.EventClick;
 import fr.flaily.xynon.events.game.EventOverrideInput;
 import fr.flaily.xynon.events.game.EventRunTick;
@@ -3226,6 +3227,11 @@ public class Minecraft implements IThreadListener, IPlayerUsage
                     else if (i == this.gameSettings.keyBindFullscreen.getKeyCode())
                     {
                         this.toggleFullscreen();
+                    }
+                    else if (i == this.gameSettings.keyBindPvPGUI.getKeyCode())
+                    {
+                        // TODO : Change that elsewhere
+                        this.displayGuiScreen(new PvpGUI());
                     }
                     else if (i == this.gameSettings.keyBindScreenshot.getKeyCode())
                     {

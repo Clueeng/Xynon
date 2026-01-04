@@ -35,7 +35,7 @@ public class ArmorStandRenderer extends RendererLivingEntity<EntityArmorStand>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityArmorStand entity)
+    public ResourceLocation getEntityTexture(EntityArmorStand entity)
     {
         return TEXTURE_ARMOR_STAND;
     }

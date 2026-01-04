@@ -6,7 +6,9 @@ import fr.flaily.xynon.events.render.ScreenEvent;
 import fr.flaily.xynon.events.render.WorldRenderEvent;
 import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
+import fr.flaily.xynon.module.settings.impl.BooleanSetting;
 import fr.flaily.xynon.module.settings.impl.NumberSetting;
+import fr.flaily.xynon.utils.WorldUtils;
 import fr.flaily.xynon.utils.render.RenderUtil;
 import fr.flaily.xynon.utils.render.WorldToScreen;
 import net.minecraft.block.Block;
@@ -15,9 +17,11 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.chunk.Chunk;
@@ -35,6 +39,7 @@ public class BedInfo extends Module implements Render {
     private final double MAX_DISTANCE = 128.0D;
 
     private final NumberSetting infoSize = num("Size", 8.0, 64.0, 32.0, 8.0, () -> true);
+    private final BooleanSetting bedBox = bool("Render Bed", true, () -> true);
 
     @EventHandler
     public void onRender(ScreenEvent event) {
@@ -106,6 +111,31 @@ public class BedInfo extends Module implements Render {
     @EventHandler
     public void onWorldRender(WorldRenderEvent event) {
         WorldToScreen.updateMatrices();
+
+        if(bedBox.isToggled()) {
+            GlStateManager.pushMatrix();
+            GlStateManager.depthMask(false);
+            GlStateManager.disableTexture2D();
+            GlStateManager.disableLighting();
+            GlStateManager.disableCull();
+            GlStateManager.enableBlend();
+            GlStateManager.disableDepth();
+
+            for(BlockNeighborResult result : foundBed) {
+                BlockPos head = result.getPos();
+                BlockPos foot = result.getFoot();
+                AxisAlignedBB render = WorldUtils.createBoundingBox(head, foot);
+                RenderGlobal.drawFilledBoundingBox(render, 255, 0, 0, 50);
+            }
+
+            GlStateManager.enableDepth();
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableLighting();
+            GlStateManager.enableCull();
+            GlStateManager.disableBlend();
+            GlStateManager.depthMask(true);
+            GlStateManager.popMatrix();
+        }
     }
 
     @EventHandler
@@ -189,9 +219,16 @@ public class BedInfo extends Module implements Render {
         }
 
         public BlockPos pos;
+
+        public BlockPos getFoot() {
+            return foot;
+        }
+
+        public BlockPos foot;
         public ArrayList<IBlockState> neighbors;
         public BlockNeighborResult(BlockPos pos) {
             this.pos = pos;
+            this.foot = getBedBottom(pos);
             this.neighbors = getNeighboringMaterials(pos);
         }
 
@@ -214,6 +251,18 @@ public class BedInfo extends Module implements Render {
                 }
             }
             return blockTypes;
+        }
+
+        private BlockPos getBedBottom(BlockPos bedTop) {
+            for(EnumFacing f : EnumFacing.Plane.HORIZONTAL.facings()) {
+                BlockPos pos = bedTop.offset(f);
+                if(mc.theWorld.getBlockState(pos).getBlock() instanceof BlockBed) {
+                    if(mc.theWorld.getBlockState(pos).getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT) {
+                        return pos;
+                    }
+                }
+            }
+            return null;
         }
 
         private final ArrayList<Block> bedwarsBlocks = new ArrayList<>();

@@ -11,6 +11,7 @@ import fr.flaily.xynon.module.settings.impl.ColorSetting;
 import fr.flaily.xynon.module.settings.impl.ModeSetting;
 import fr.flaily.xynon.module.settings.impl.MultiSelectSetting;
 import fr.flaily.xynon.utils.BlurRenderer;
+import fr.flaily.xynon.utils.irc.XynonClient;
 import fr.flaily.xynon.utils.render.ColorUtils;
 import fr.flaily.xynon.utils.render.RenderUtil;
 import fr.flaily.xynon.utils.render.shader.ShaderUtil;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Queue;
 
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 @FeatureInfo(name = "HUD", key = -1, category = Module.Category.Render)
@@ -58,15 +60,20 @@ public class HUD extends Module implements Render {
             drawArrayList(event);
         }
         if(components.isSelected("Watermark")) {
-            String watermark = "Xynon - 1.0" ;
+            String watermark = "Xynon";
+            if(Xynon.INSTANCE.user != null) {
+                XynonClient.LoginResult user = Xynon.INSTANCE.user;
+                watermark += " | UID: " + user.uid + " | " + user.name;
+            }
             double x = 6;
             double y = 6;
             double width = 100;
             double height = 100;
             double radius = 13;
 
+            String finalWatermark = watermark;
             Runnable watermarkShape = () -> {
-                RenderUtil.drawRoundedRect3(x, y, x + big.getWidth(watermark) + 2, y + big.getHeight(watermark) + 2, 12f, -1);
+                RenderUtil.drawRoundedRect3(x, y, x + big.getWidth(finalWatermark) + 2, y + big.getHeight(finalWatermark) + 2, 12f, -1);
             };
             Bloom.renderBloom(4f, new Color(0, 0, 0, 150).getRGB(), watermarkShape);
             GaussianBlur.renderBlur(13f, watermarkShape);

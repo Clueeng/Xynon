@@ -48,7 +48,7 @@ public class RenderHorse extends RenderLiving<EntityHorse>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityHorse entity)
+    public ResourceLocation getEntityTexture(EntityHorse entity)
     {
         if (!entity.func_110239_cn())
         {

@@ -36,7 +36,7 @@ public class RenderLeashKnot extends Render<EntityLeashKnot>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityLeashKnot entity)
+    public ResourceLocation getEntityTexture(EntityLeashKnot entity)
     {
         return leashKnotTextures;
     }

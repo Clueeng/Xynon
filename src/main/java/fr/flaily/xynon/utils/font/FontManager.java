@@ -14,6 +14,7 @@ public class FontManager {
         fonts.put("inter", new CustomFont("Inter.ttf"));
         fonts.put("tiktok_bold", new CustomFont("TikTok_Bold.ttf"));
         fonts.put("tiktok_norm", new CustomFont("TikTok_Regular.ttf"));
+        fonts.put("outfit", new CustomFont("Outfit.ttf"));
     }
 
     public CustomFont getFunnel() {
@@ -27,6 +28,9 @@ public class FontManager {
     }
     public CustomFont getTikTokNormal() {
         return getFont("tiktok_norm");
+    }
+    public CustomFont getOutfit() {
+        return getFont("outfit");
     }
     private CustomFont getFont(String name) {
         if(!fonts.containsKey(name)) {

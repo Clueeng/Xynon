@@ -24,7 +24,8 @@ public class XynonClient implements Runnable {
      */
     public static class LoginResult {
         public String discordId; 
-        public String name;
+        public String name, discordName;
+        public long uid;
         public String authToken;
         
         @Override
@@ -44,7 +45,6 @@ public class XynonClient implements Runnable {
      * @throws Exception if the login process fails at any stage.
      */
     public LoginResult loginWithDiscord() throws Exception {
-        
         // --- 1. START LOGIN AND GET CHALLENGE ID ---
         System.out.println("Starting Discord login challenge...");
         
@@ -151,10 +151,14 @@ public class XynonClient implements Runnable {
         }
 
         LoginResult result = new LoginResult();
-        // The Node.js server signs the token with keys: discordId and username
+//        result.discordId = payloadJson.get("discordId").getAsString();
+//        result.name = payloadJson.get("username").getAsString();
+//        result.authToken = jwtToken; // Store the original token for later use
         result.discordId = payloadJson.get("discordId").getAsString();
-        result.name = payloadJson.get("username").getAsString();
-        result.authToken = jwtToken; // Store the original token for later use
+        result.discordName = payloadJson.get("discordName").getAsString();
+        result.name = payloadJson.get("name").getAsString();
+        result.uid = payloadJson.get("uid").getAsLong();
+        result.authToken = jwtToken;
         
         return result;
     }

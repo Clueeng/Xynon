@@ -23,7 +23,7 @@ public class RenderSpider<T extends EntitySpider> extends RenderLiving<T>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(T entity)
+    public ResourceLocation getEntityTexture(T entity)
     {
         return spiderTextures;
     }

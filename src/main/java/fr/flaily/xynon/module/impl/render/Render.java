@@ -7,12 +7,12 @@ public interface Render {
     {}
 
     // Inter fonts
-    CustomFontRenderer xsmall = Xynon.INSTANCE.getFontManager().getInter().size(12),
-            small   = Xynon.INSTANCE.getFontManager().getInter().size(15),
-            medium  = Xynon.INSTANCE.getFontManager().getInter().size(18),
-            big     = Xynon.INSTANCE.getFontManager().getInter().size(20),
-            bigger  = Xynon.INSTANCE.getFontManager().getInter().size(24),
-            huge    = Xynon.INSTANCE.getFontManager().getInter().size(32),
+    CustomFontRenderer xsmall = Xynon.INSTANCE.getFontManager().getOutfit().size(12),
+            small   = Xynon.INSTANCE.getFontManager().getOutfit().size(15),
+            medium  = Xynon.INSTANCE.getFontManager().getOutfit().size(18),
+            big     = Xynon.INSTANCE.getFontManager().getOutfit().size(20),
+            bigger  = Xynon.INSTANCE.getFontManager().getOutfit().size(24),
+            huge    = Xynon.INSTANCE.getFontManager().getOutfit().size(32),
 
             // TikTok normal
             tiktokXSmall  = Xynon.INSTANCE.getFontManager().getTikTokNormal().size(12),

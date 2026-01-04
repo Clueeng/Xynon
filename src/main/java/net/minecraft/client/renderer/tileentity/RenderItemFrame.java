@@ -89,7 +89,7 @@ public class RenderItemFrame extends Render<EntityItemFrame>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityItemFrame entity)
+    public ResourceLocation getEntityTexture(EntityItemFrame entity)
     {
         return null;
     }

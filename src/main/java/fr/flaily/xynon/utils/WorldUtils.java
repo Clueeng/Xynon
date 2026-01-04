@@ -24,6 +24,27 @@ public class WorldUtils implements Utils {
                 .collect(Collectors.toList());
     }
 
+    public static AxisAlignedBB createBoundingBox(BlockPos pos1, BlockPos pos2) {
+        double minX = Math.min(pos1.getX(), pos2.getX());
+        double minY = Math.min(pos1.getY(), pos2.getY());
+        double minZ = Math.min(pos1.getZ(), pos2.getZ());
+
+        double maxX = Math.max(pos1.getX(), pos2.getX()) + 1.0;
+        double maxY = Math.max(pos1.getY(), pos2.getY()) + 1.0;
+        double maxZ = Math.max(pos1.getZ(), pos2.getZ()) + 1.0;
+
+        return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ).offset(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY, -mc.getRenderManager().viewerPosZ);
+    }
+    public static AxisAlignedBB createBoundingBox(BlockPos pos1) {
+        double minX = pos1.getX();
+        double minY = pos1.getY();
+        double minZ = pos1.getZ();
+        double maxX = pos1.getX() + 1.0;
+        double maxY = pos1.getY() + 1.0;
+        double maxZ = pos1.getZ() + 1.0;
+        return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ).offset(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY, -mc.getRenderManager().viewerPosZ);
+    }
+
 
     public static float[] getRotationDeltaToBlock(final Vec3 eyes, final Vec3 destination) {
         final double deltaX = destination.xCoord - eyes.xCoord,

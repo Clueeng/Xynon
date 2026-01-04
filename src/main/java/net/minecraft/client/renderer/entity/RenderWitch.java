@@ -28,7 +28,7 @@ public class RenderWitch extends RenderLiving<EntityWitch>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityWitch entity)
+    public ResourceLocation getEntityTexture(EntityWitch entity)
     {
         return witchTextures;
     }

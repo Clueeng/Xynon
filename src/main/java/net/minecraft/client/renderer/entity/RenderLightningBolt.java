@@ -142,7 +142,7 @@ public class RenderLightningBolt extends Render<EntityLightningBolt>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityLightningBolt entity)
+    public ResourceLocation getEntityTexture(EntityLightningBolt entity)
     {
         return null;
     }

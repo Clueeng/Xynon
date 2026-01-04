@@ -18,7 +18,7 @@ public class RenderGhast extends RenderLiving<EntityGhast>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityGhast entity)
+    public ResourceLocation getEntityTexture(EntityGhast entity)
     {
         return entity.isAttacking() ? ghastShootingTextures : ghastTextures;
     }

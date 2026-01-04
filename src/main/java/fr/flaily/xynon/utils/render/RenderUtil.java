@@ -1,15 +1,22 @@
 package fr.flaily.xynon.utils.render;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -23,6 +30,7 @@ import java.net.URL;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.UUID;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
@@ -32,6 +40,69 @@ public class RenderUtil {
     private static Minecraft mc = Minecraft.getMinecraft();
     private static final Frustum frustum = new Frustum();
 
+
+    private static NetworkPlayerInfo getPlayerInfo(UUID uuid) {
+        return mc.thePlayer.sendQueue.playerInfoMap.get(uuid);
+    }
+
+    private static void renderHead(UUID playerID, int x, int y, int size) {
+        NetworkPlayerInfo info = getPlayerInfo(playerID);
+        GameProfile gameProfile = info.getGameProfile();
+        EntityPlayer entityplayer = mc.theWorld.getPlayerEntityByUUID(gameProfile.getId());
+        mc.getTextureManager().bindTexture(info.getLocationSkin());
+        int l2 = 8;
+        int i3 = 8;
+        Gui.drawScaledCustomSizeModalRect(x, y, 8.0F, (float)l2, 8, i3, size, size, 64.0F, 64.0F);
+
+        if (entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.HAT))
+        {
+            int j3 = 8;
+            int k3 = 8;
+            Gui.drawScaledCustomSizeModalRect(x, y, 40.0F, (float)j3, 8, k3, size, size, 64.0F, 64.0F);
+        }
+    }
+    public static void renderEntityHead(EntityLivingBase entity, int x, int y, int size) {
+        if (entity == null) return;
+
+        ResourceLocation texture;
+        boolean isPlayer = entity instanceof EntityPlayer;
+
+        if (isPlayer) {
+            // Handle Player Skin
+            NetworkPlayerInfo info = mc.getNetHandler().getPlayerInfo(entity.getUniqueID());
+            texture = (info != null) ? info.getLocationSkin() : DefaultPlayerSkin.getDefaultSkin(entity.getUniqueID());
+        } else {
+            Render<Entity> render = mc.getRenderManager().getEntityRenderObject(entity);
+            texture = render.getEntityTexture(entity);
+        }
+
+        mc.getTextureManager().bindTexture(texture);
+
+        // Draw the base head (Standard UVs for most vanilla mobs/players are 8, 8)
+        Gui.drawScaledCustomSizeModalRect(x, y, 8.0F, 8.0F, 8, 8, size, size, 64.0F, 64.0F);
+
+        // If it's a player, overlay the "Hat" layer
+        if (isPlayer) {
+            EntityPlayer player = (EntityPlayer) entity;
+            if (player.isWearing(EnumPlayerModelParts.HAT)) {
+                Gui.drawScaledCustomSizeModalRect(x, y, 40.0F, 8.0F, 8, 8, size, size, 64.0F, 64.0F);
+            }
+        }
+    }
+    public static void drawWhiteRect(float x, float y, float width, float height) {
+        // Binding a null texture or a 1x1 white texture ensures
+        // the shader just sees "white" pixels to multiply your red color by.
+        mc.getTextureManager().bindTexture(new ResourceLocation("textures/white.png")); // Or use a static white texture
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        worldrenderer.pos(x, y + height, 0.0D).tex(0, 1).endVertex();
+        worldrenderer.pos(x + width, y + height, 0.0D).tex(1, 1).endVertex();
+        worldrenderer.pos(x + width, y, 0.0D).tex(1, 0).endVertex();
+        worldrenderer.pos(x, y, 0.0D).tex(0, 0).endVertex();
+        tessellator.draw();
+    }
 
 
     public static void pre3D() {
@@ -1265,4 +1336,40 @@ public class RenderUtil {
     public static void endRoundedClip() {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
+
+    public static void drawLine(
+            float x1, float y1,
+            float x2, float y2,
+            int color,
+            float lineWidth
+    ) {
+        float a = ((color >> 24) & 0xFF) / 255f;
+        float r = ((color >> 16) & 0xFF) / 255f;
+        float g = ((color >> 8) & 0xFF) / 255f;
+        float b = (color & 0xFF) / 255f;
+
+        GL11.glPushMatrix();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glLineWidth(lineWidth);
+
+        GL11.glColor4f(r, g, b, a);
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glVertex2f(x1, y1);
+        GL11.glVertex2f(x2, y2);
+        GL11.glEnd();
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glPopMatrix();
+
+        GlStateManager.resetColor();
+    }
+    public static int withAlpha(int color, float alpha) {
+        alpha = Math.max(0f, Math.min(1f, alpha));
+        int a = (int) (alpha * 255f) & 0xFF;
+        return (a << 24) | (color & 0x00FFFFFF);
+    }
+
 }

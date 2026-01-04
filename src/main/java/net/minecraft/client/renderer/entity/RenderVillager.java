@@ -29,7 +29,7 @@ public class RenderVillager extends RenderLiving<EntityVillager>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityVillager entity)
+    public ResourceLocation getEntityTexture(EntityVillager entity)
     {
         switch (entity.getProfession())
         {

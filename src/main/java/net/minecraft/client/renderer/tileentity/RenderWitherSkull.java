@@ -60,7 +60,7 @@ public class RenderWitherSkull extends Render<EntityWitherSkull>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityWitherSkull entity)
+    public ResourceLocation getEntityTexture(EntityWitherSkull entity)
     {
         return entity.isInvulnerable() ? invulnerableWitherTextures : witherTextures;
     }

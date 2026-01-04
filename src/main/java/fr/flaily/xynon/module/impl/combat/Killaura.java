@@ -4,6 +4,15 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
 
+import fr.flaily.xynon.module.settings.impl.*;
+import fr.flaily.xynon.utils.PacketUtil;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import org.lwjgl.input.Keyboard;
 
 import best.azura.eventbus.handler.EventHandler;
@@ -15,10 +24,6 @@ import fr.flaily.xynon.events.player.RotationEvent;
 import fr.flaily.xynon.events.player.UpdateEvent;
 import fr.flaily.xynon.module.FeatureInfo;
 import fr.flaily.xynon.module.Module;
-import fr.flaily.xynon.module.settings.impl.BooleanSetting;
-import fr.flaily.xynon.module.settings.impl.ModeSetting;
-import fr.flaily.xynon.module.settings.impl.MultiSelectSetting;
-import fr.flaily.xynon.module.settings.impl.NumberSetting;
 import fr.flaily.xynon.utils.MathHelper;
 import fr.flaily.xynon.utils.Timer;
 import fr.flaily.xynon.utils.WorldUtils;
@@ -36,11 +41,12 @@ import net.minecraft.potion.Potion;
 @FeatureInfo(name = "Killaura", category = Module.Category.Combat, key = Keyboard.KEY_R)
 public class Killaura extends Module {
     public ModeSetting rotation = mode("Rotation Type", "Instant", "Instant", "Smooth");
+    public RangeSetting pitchSmoothSpeed = range("Pitch Smooth", 0.0, 180.0, 20.0, 40.0, 0.5, () -> rotation.is("Smooth"));
+    public RangeSetting yawSmoothSpeed = range("Yaw Smooth", 0.0, 180.0, 20.0, 40.0, 0.5, () -> rotation.is("Smooth"));
     public NumberSetting range = num("Range", 3.0, 6.0, 3.00, 0.05, () -> true);
     public BooleanSetting raycastCheck = bool("Raycast", true, () -> true);
     public MultiSelectSetting allowedEntities = multi("Targets", Arrays.asList("Players", "Mobs"), Arrays.asList("Player", "Mobs"), () -> true);
     public ModeSetting blockMode = mode("Block", "None", "None", "Vanilla", "Legit");
-
 
     private Entity target;
     private float yaw, pitch;
@@ -64,8 +70,27 @@ public class Killaura extends Module {
 
         if(event.getTime() == EventTime.POST) {
             float[] toEntity = MathHelper.getRotations(target);
-            this.yaw = toEntity[0];
-            this.pitch = toEntity[1];
+
+            switch (rotation.getValue()) {
+                case "Instant" -> {
+                    this.yaw = toEntity[0];
+                    this.pitch = toEntity[1];
+                }
+                case "Smooth" -> {
+                    final float pitchSmoothThreshold = MathHelper.randomNumber((float) pitchSmoothSpeed.getValueLow(), (float) pitchSmoothSpeed.getValueHigh());
+                    final float yawSmoothThreshold = MathHelper.randomNumber((float) yawSmoothSpeed.getValueLow(), (float) yawSmoothSpeed.getValueHigh());
+                    float[] rotations = MathHelper.getRotations(target);
+                    float targetYaw = rotations[0];
+                    float targetPitch = rotations[1];
+                    float yawChange = net.minecraft.util.MathHelper.wrapAngleTo180_float(targetYaw - mc.thePlayer.serverYaw);
+                    float pitchChange = net.minecraft.util.MathHelper.wrapAngleTo180_float(targetPitch - mc.thePlayer.serverPitch);
+                    pitchChange = Math.max(-pitchSmoothThreshold, Math.min(pitchSmoothThreshold, pitchChange));
+                    yawChange = Math.max(-yawSmoothThreshold, Math.min(yawSmoothThreshold, yawChange));
+
+                    this.yaw = mc.thePlayer.serverYaw + yawChange;
+                    this.pitch = mc.thePlayer.serverPitch + pitchChange;
+                }
+            }
         }
     }
 
@@ -108,6 +133,7 @@ public class Killaura extends Module {
                 }else{
                     mc.playerController.attackEntity(mc.thePlayer, target);
                 }
+                // test
             }
 
             nextDelay = getDelay();
@@ -123,8 +149,8 @@ public class Killaura extends Module {
             mc.gameSettings.keyBindUseItem.pressed = mc.thePlayer.ticksExisted % 2 == 0;
         }
         if(blockMode.is("Vanilla")) {
-            mc.gameSettings.keyBindUseItem.pressed = true;
-            mc.thePlayer.setItemInUse(mc.thePlayer.getHeldItem(), 9999);
+
+            mc.playerController.sendUseItem(mc.thePlayer, mc.theWorld, mc.thePlayer.getHeldItem());
         }
     }
 
@@ -140,18 +166,23 @@ public class Killaura extends Module {
         if(random.nextFloat() > 0.95) {
             isExhausted = true;
         }
-        float a = mc.thePlayer.serverYaw;
-        float b = mc.thePlayer.serverPitch;
-        float c = mc.thePlayer.ticksExisted;
+        float c = mc.thePlayer.ticksExisted * 0.1f;
 
-        float f = 1.0f + (float) (Math.sin(a * b * c) * 0.2f);
-        float cps = Math.abs(12 - (6 * f));
+        float f = 1.0f + (float) (Math.sin(c) * 0.5f);
+
+        int maxCps = 20;
+        int minCps = 10;
+        float cps = Math.abs(maxCps - (minCps * f));
         if(isExhausted) {
             cps = Math.max(2, cps * 0.8f - random.nextFloat());
             isExhausted = Math.random() > 0.3f;
         }
         System.out.println("CPS: " + cps);
         return (long) (1000 / cps);
+    }
+
+    public Entity getTarget() {
+        return target;
     }
 
 }

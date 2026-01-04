@@ -107,6 +107,10 @@ public final class CustomFontRenderer {
         final float width = getWidth(getText(text)) / 2.0f;
         renderString(getText(text), x - width, y2 - (getHeight(getText(text)) / 2), color, false);
     }
+    public void drawCenteredString(final String text, final float x, final float y2, final int color, boolean shadow) {
+        final float width = getWidth(getText(text)) / 2.0f;
+        renderString(getText(text), x - width, y2 - (getHeight(getText(text)) / 2), color, shadow);
+    }
 
     public void drawStringWithShadow(final String text, final float x, final float y2, final int color) {
         GL11.glTranslated(0.5, 0.5, 0.0);

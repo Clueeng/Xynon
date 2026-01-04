@@ -88,7 +88,7 @@ public class RenderArrow extends Render<EntityArrow>
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(EntityArrow entity)
+    public ResourceLocation getEntityTexture(EntityArrow entity)
     {
         return arrowTextures;
     }

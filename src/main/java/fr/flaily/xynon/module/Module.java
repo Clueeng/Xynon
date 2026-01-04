@@ -1,6 +1,7 @@
 package fr.flaily.xynon.module;
 
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.module.impl.pvp.ModulePvP;
 import fr.flaily.xynon.module.settings.Setting;
 import fr.flaily.xynon.utils.AnimFloat;
 import fr.flaily.xynon.utils.Utils;
@@ -43,6 +44,8 @@ public class Module implements SettingInitializer, Utils {
     }
 
     public Module() {
+        if(this instanceof ModulePvP) return;
+
         if(this.getClass().isAnnotationPresent(FeatureInfo.class)) {
             FeatureInfo info = getClass().getAnnotation(FeatureInfo.class);
             this.name = info.name();
