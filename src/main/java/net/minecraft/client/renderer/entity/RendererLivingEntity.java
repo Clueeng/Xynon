@@ -7,6 +7,7 @@ import java.nio.FloatBuffer;
 import java.util.List;
 
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.render.EventTeamColor;
 import fr.flaily.xynon.module.impl.render.Chams;
 import fr.flaily.xynon.utils.WorldUtils;
 import fr.flaily.xynon.utils.render.RenderUtil;
@@ -343,12 +344,19 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
         }
 
-        float f1 = (float)(i >> 16 & 255) / 255.0F;
-        float f2 = (float)(i >> 8 & 255) / 255.0F;
-        float f = (float)(i & 255) / 255.0F;
+//        float f1 = (float)(i >> 16 & 255) / 255.0F;
+//        float f2 = (float)(i >> 8 & 255) / 255.0F;
+//        float f = (float)(i & 255) / 255.0F;
         GlStateManager.disableLighting();
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-        GlStateManager.color(f1, f2, f, 1.0F);
+        EventTeamColor eventTeamColor = new EventTeamColor(entityLivingBaseIn, new Color(i));
+        Xynon.INSTANCE.getEventBus().post(eventTeamColor);
+
+        float modR = eventTeamColor.oColor.getRed() / 255.0F;
+        float modG = eventTeamColor.oColor.getGreen() / 255.0F;
+        float modB = eventTeamColor.oColor.getBlue() / 255.0F;
+        GlStateManager.color(modR, modG, modB, 1.0F);
+
         GlStateManager.disableTexture2D();
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         GlStateManager.disableTexture2D();

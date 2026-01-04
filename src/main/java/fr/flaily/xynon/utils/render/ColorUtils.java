@@ -8,7 +8,6 @@ import java.util.Random;
 
 public class ColorUtils {
 
-
     public static int interpolateColor(int startColor, int endColor, float progress) {
         int startR = (startColor >> 16) & 0xFF;
         int startG = (startColor >> 8) & 0xFF;

@@ -1,5 +1,6 @@
 package fr.flaily.xynon.utils;
 
+import java.awt.*;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -35,6 +36,10 @@ public class WorldUtils implements Utils {
 
         return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ).offset(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY, -mc.getRenderManager().viewerPosZ);
     }
+    public static AxisAlignedBB createBoundingBox(AxisAlignedBB boundingBox) {
+        return boundingBox.offset(-mc.getRenderManager().viewerPosX, -mc.getRenderManager().viewerPosY, -mc.getRenderManager().viewerPosZ);
+    }
+
     public static AxisAlignedBB createBoundingBox(BlockPos pos1) {
         double minX = pos1.getX();
         double minY = pos1.getY();
@@ -153,6 +158,14 @@ public class WorldUtils implements Utils {
         if((entityLivingBase instanceof EntityAnimal || entityLivingBase instanceof EntityVillager)
                 && validEntities.isSelected("Passive")) return true;
         return false;
+    }
+    public static Color getEntityColor(EntityLivingBase entityLivingBase) {
+        if(entityLivingBase == mc.thePlayer) return null;
+
+        if(entityLivingBase instanceof EntityPlayer) return new Color(255, 0, 0);
+        if(entityLivingBase instanceof EntityMob) return new Color(0, 0, 255);
+        if((entityLivingBase instanceof EntityAnimal || entityLivingBase instanceof EntityVillager)) return new  Color(0, 255, 0);
+        return new Color(0, 0, 0);
     }
 
 }

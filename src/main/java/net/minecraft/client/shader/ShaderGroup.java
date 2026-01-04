@@ -29,6 +29,11 @@ public class ShaderGroup
     private Framebuffer mainFramebuffer;
     private IResourceManager resourceManager;
     private String shaderGroupName;
+
+    public List<Shader> getListShaders() {
+        return listShaders;
+    }
+
     private final List<Shader> listShaders = Lists.<Shader>newArrayList();
     private final Map<String, Framebuffer> mapFramebuffers = Maps.<String, Framebuffer>newHashMap();
     private final List<Framebuffer> listFramebuffers = Lists.<Framebuffer>newArrayList();

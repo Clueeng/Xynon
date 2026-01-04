@@ -1,44 +1,28 @@
 #define repeat(i, n) for(int i = 0; i < n; i++)
 
 uniform float time;
-
 uniform vec2 resolution;
 
-void main(void)
-{
-    vec2 uv = gl_FragCoord.xy / resolution.xy - .5;
-    uv.y *= resolution.y / resolution.x;
-    float mul = resolution.x / resolution.y;
-    vec3 dir = vec3(uv * mul, 1.);
-    float a2 = time * 20. + .5;
-    float a1 = 1.0;
-    mat2 rot1 = mat2(cos(a1), sin(a1), - sin(a1), cos(a1));
-    mat2 rot2 = rot1;
-    dir.xz *= rot1;
-    dir.xy *= rot2;
-    vec3 from = vec3(0., 0., 0.);
-    from += vec3(.0025 * time, .03 * time, - 2.);
-    from.xz *= rot1;
-    from.xy *= rot2;
-    float s = .1, fade = .07;
-    vec3 v = vec3(0.4);
-    repeat(r, 10) {
-	vec3 p = from + s * dir * 1.5;
-	p = abs(vec3(0.750) - mod(p, vec3(0.750 * 2.)));
-	p.x += float(r * r) * 0.01;
-	p.y += float(r) * 0.02;
-	float pa, a = pa = 0.;
-	repeat(i, 12) {
-	    p = abs(p) / dot(p, p) - 0.340;
-	    a += abs(length(p) - pa * 0.2);
-	    pa = length(p);
-	}
-	a *= a * a * 2.;
-  v += vec3(s * 0.8, s * 0.3, s) * a * 0.0017 * fade;
+void main(void) {
+    // Normalize coordinates (-1 to 1) and fix aspect ratio
+    vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
 
-	fade *= 0.960;
-	s += 0.110;
+    // Create a rolling movement over time
+    for(float i = 1.0; i < 4.0; i++) {
+        uv.x += 0.35 / i * sin(i * 3.0 * uv.y + time * 0.5);
+        uv.y += 0.35 / i * cos(i * 3.0 * uv.x + time * 0.5);
     }
-    v = mix(vec3(length(v)), v, 0.8);
-    gl_FragColor = vec4(v * 0.01, 1.);
+
+    // Base colors (Dark Navy to Deep Purple/Teal)
+    vec3 color1 = vec3(0.05, 0.1, 0.2); // Deep Blue
+    vec3 color2 = vec3(0.2, 0.05, 0.3); // Deep Purple
+
+    // Mix based on the warped UV coordinates
+    float brightness = 0.5 * sin(uv.x + uv.y) + 0.5;
+    vec3 finalColor = mix(color1, color2, brightness);
+
+    // Add a subtle "sheen" or highlight layer
+    finalColor += 0.08 / length(uv);
+
+    gl_FragColor = vec4(finalColor, 1.0);
 }

@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.utils.BlurRenderer;
 import fr.flaily.xynon.utils.irc.XynonClient;
 import fr.flaily.xynon.utils.irc.XynonClient.LoginResult;
+import fr.flaily.xynon.utils.render.shader.impl.GaussianBlur;
 import fr.flaily.xynon.utils.render.shader.impl.MenuShader;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -38,12 +40,17 @@ public class XynonMenu extends GuiScreen {
 
         // buttons background
         int buttonHeight = buttons.size() * 32;
-        Gui.drawRect(width / 2 - 120, height / 2 - 60, width / 2 + 120, height / 2 + buttonHeight - 48, new Color(0, 0, 0, 60).getRGB());
+
+        Gui.drawRect(width / 2 - 120, height / 2 - 60, width / 2 + 120, ((height / 2f) + buttonHeight) - 80, new Color(0, 0, 0, 60).getRGB());
+        GaussianBlur.renderBlur(23f, () -> {
+            Gui.drawRect(width / 2 - 120, height / 2 - 60, width / 2 + 120, ((height / 2f) + buttonHeight) - 80, new Color(0, 0, 0, 60).getRGB());
+
+        });
 
 
         if(Xynon.INSTANCE.user != null) {
             String name = Xynon.INSTANCE.user.name;
-            Gui.drawRect(width / 2 - 120, height / 2 - 120, width / 2 + 120, height / 2 - 90, new Color(0, 0, 0, 60).getRGB());
+            Gui.drawRect(width / 2f - 120, height / 2f - 120, width / 2f + 120, height / 2f - 90, new Color(0, 0, 0, 60).getRGB());
             Xynon.INSTANCE.getFontManager().getFunnel().size(20).drawCenteredString("Welcome back, " + name,
             width / 2f, height / 2 - 106, -1);
 

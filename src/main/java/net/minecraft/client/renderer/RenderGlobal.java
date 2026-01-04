@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -16,6 +17,11 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.module.impl.render.ESP;
+import fr.flaily.xynon.utils.WorldUtils;
+import fr.flaily.xynon.utils.render.ColorUtils;
+import net.minecraft.client.shader.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
@@ -65,9 +71,6 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.client.shader.ShaderGroup;
-import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -325,6 +328,9 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
     protected boolean isRenderEntityOutlines()
     {
+        // TODO : Make that an ESP
+        ESP esp = Xynon.INSTANCE.getModuleManager().getModule(ESP.class);
+        if(esp.isToggled() && esp.espMode.isSelected("Shader")) return true;
         return !Config.isFastRender() && !Config.isShaders() && !Config.isAntialiasing() ? this.entityOutlineFramebuffer != null && this.entityOutlineShader != null && this.mc.thePlayer != null && this.mc.thePlayer.isSpectator() && this.mc.gameSettings.keyBindSpectatorOutlines.isKeyDown() : false;
     }
 
@@ -630,6 +636,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             this.firstWorldLoad = true;
         }
     }
+    ESP esp;
 
     protected void stopChunkUpdates()
     {
@@ -720,6 +727,8 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                     }
                 }
             }
+            if(esp == null)
+                esp = Xynon.INSTANCE.getModuleManager().getModule(ESP.class);
 
             if (this.isRenderEntityOutlines())
             {
@@ -737,16 +746,23 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                     boolean flag2 = this.mc.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase)this.mc.getRenderViewEntity()).isPlayerSleeping();
                     boolean flag3 = entity3.isInRangeToRender3d(d0, d1, d2) && (entity3.ignoreFrustumCheck || camera.isBoundingBoxInFrustum(entity3.getEntityBoundingBox()) || entity3.riddenByEntity == this.mc.thePlayer) && entity3 instanceof EntityPlayer;
 
-                    if ((entity3 != this.mc.getRenderViewEntity() || this.mc.gameSettings.thirdPersonView != 0 || flag2) && flag3)
-                    {
+                    if((esp.isToggled() && esp.espMode.isSelected("Shader")) && entity3 instanceof EntityLivingBase living) {
+                        if(!(WorldUtils.isEntityValid(living, esp.targets))) continue;
                         this.renderManager.renderEntitySimple(entity3, partialTicks);
+                    }else{
+                        if ((entity3 != this.mc.getRenderViewEntity() || this.mc.gameSettings.thirdPersonView != 0 || flag2) && flag3)
+                        {
+                            this.renderManager.renderEntitySimple(entity3, partialTicks);
+                        }
                     }
+
                 }
 
                 this.renderManager.setRenderOutlines(false);
                 RenderHelper.enableStandardItemLighting();
                 GlStateManager.depthMask(false);
                 this.entityOutlineShader.loadShaderGroup(partialTicks);
+
                 GlStateManager.enableLighting();
                 GlStateManager.depthMask(true);
                 this.mc.getFramebuffer().bindFramebuffer(false);
