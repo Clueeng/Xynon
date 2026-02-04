@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.bouncycastle.jcajce.provider.asymmetric.dsa.DSASigner.stdDSA;
+
 import fr.flaily.xynon.module.settings.impl.ModeSetting;
 import fr.flaily.xynon.module.settings.impl.MultiSelectSetting;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -166,6 +169,34 @@ public class WorldUtils implements Utils {
         if(entityLivingBase instanceof EntityMob) return new Color(0, 0, 255);
         if((entityLivingBase instanceof EntityAnimal || entityLivingBase instanceof EntityVillager)) return new  Color(0, 255, 0);
         return new Color(0, 0, 0);
+    }
+
+    public static BlockPos getClosestBlock(Material material, int radius) {
+        Minecraft mc = Minecraft.getMinecraft();
+        BlockPos pos = new BlockPos(mc.thePlayer.getPosition());
+
+        BlockPos closest = null;
+        double closestDistSq = Double.MAX_VALUE;
+
+        for(int x = -radius; x <= radius; x++) {
+                for(int z = -radius; z <= radius; z++) {
+                        for(int y = -radius; y <= radius; y++) {
+                                BlockPos blockPos = new BlockPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
+                                if(mc.theWorld.getBlockState(blockPos).getBlock().getMaterial() == material) {
+                                        double dist = blockPos.distanceSq(pos);
+                                        if(dist <= closestDistSq) {
+                                                closestDistSq = dist;
+                                                closest = blockPos;
+                                        }
+                                }
+                        }
+                }
+        }
+        if(closest != null) {
+                System.out.println(closest);
+        }
+
+        return closest;
     }
 
 }

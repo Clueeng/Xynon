@@ -1,6 +1,8 @@
 package fr.flaily.xynon.utils.render;
 
 import com.mojang.authlib.GameProfile;
+
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.Gui;
@@ -18,7 +20,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+
+import org.bouncycastle.jcajce.provider.asymmetric.dsa.DSASigner.stdDSA;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
@@ -484,6 +489,45 @@ public class RenderUtil {
         worldRenderer.pos(axisAlignedBB.maxX, axisAlignedBB.maxY, axisAlignedBB.maxZ).endVertex();
         worldRenderer.pos(axisAlignedBB.maxX, axisAlignedBB.minY, axisAlignedBB.maxZ).endVertex();
         tessellator.draw();
+    }
+    public static AxisAlignedBB toAlignedBB(BlockPos pos) {
+        Minecraft mc = Minecraft.getMinecraft();
+        IBlockState state = mc.theWorld.getBlockState(pos);
+        AxisAlignedBB bb = state.getBlock().getSelectedBoundingBox(mc.theWorld, pos);
+
+        if (bb == null) {
+            bb = new AxisAlignedBB(
+                pos.getX(), pos.getY(), pos.getZ(),
+                pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1
+            );
+        }
+    
+    return bb;
+}
+
+    public static void renderBoxBlock(BlockPos pos) {
+        if(pos == null) return;
+
+        double x = mc.getRenderManager().viewerPosX;
+        double y = mc.getRenderManager().viewerPosY;
+        double z = mc.getRenderManager().viewerPosZ;
+
+        AxisAlignedBB bb = RenderUtil.toAlignedBB(pos);
+        AxisAlignedBB renderBB = bb.offset(-x, -y, -z).expand(0.02, 0.02, 0.02);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
+
+        RenderGlobal.drawFilledBoundingBox(renderBB, 255, 0, 0, 100);
+
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void renderBox(double x, double y, double z, double width, double height, Color color, boolean outline) {

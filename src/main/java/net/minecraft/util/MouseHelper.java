@@ -3,6 +3,9 @@ package net.minecraft.util;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
+import fr.flaily.xynon.Xynon;
+import fr.flaily.xynon.events.game.EventOverrideInput;
+
 public class MouseHelper
 {
     /** Mouse delta X this frame */
@@ -32,7 +35,13 @@ public class MouseHelper
 
     public void mouseXYChange()
     {
-        this.deltaX = Mouse.getDX();
-        this.deltaY = Mouse.getDY();
+        EventOverrideInput input = new EventOverrideInput();
+        Xynon.INSTANCE.getEventBus().post(input);
+
+        int mdx = Mouse.getDX();
+        int mdy = Mouse.getDY();
+        this.deltaX = mdx + input.getDX();
+        this.deltaY = mdy + input.getDY();
+        
     }
 }

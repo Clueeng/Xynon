@@ -15,7 +15,8 @@ public class Module implements SettingInitializer, Utils {
         Combat,
         Render,
         Player,
-        Movement;
+        Movement,
+        Macros;
     }
 
     public Category category;

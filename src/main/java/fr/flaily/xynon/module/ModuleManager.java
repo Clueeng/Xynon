@@ -6,6 +6,7 @@ import fr.flaily.xynon.module.impl.combat.AutoClicker;
 import fr.flaily.xynon.module.impl.combat.Killaura;
 import fr.flaily.xynon.module.impl.combat.Reach;
 import fr.flaily.xynon.module.impl.combat.Velocity;
+import fr.flaily.xynon.module.impl.macro.AutoFish;
 import fr.flaily.xynon.module.impl.movement.Flight;
 import fr.flaily.xynon.module.impl.player.FastPlace;
 import fr.flaily.xynon.module.impl.player.FireTest;
@@ -50,15 +51,18 @@ public class ModuleManager {
         register(new TargetHUD());
         register(new FireTest());
 
+        register(new AutoFish());
+
         Xynon.INSTANCE.debugLogger().sendLog("Finished registering modules");
 
         registerPvP(new ModuleFPS());
-        registerPvP(new ModuleFPS());
-        registerPvP(new ModuleFPS());
-        registerPvP(new ModuleFPS());
-        registerPvP(new ModuleFPS());
-        registerPvP(new ModuleFPS());
-        registerPvP(new ModuleFPS());
+        // registerPvP(new ModuleFPS());
+        // registerPvP(new ModuleFPS());
+        // registerPvP(new ModuleFPS());
+        // registerPvP(new ModuleFPS());
+        // registerPvP(new ModuleFPS());
+        // registerPvP(new ModuleFPS());
+
     }
 
     public ArrayList<Module> getModulesConditionally(Predicate<Module> predicate) {

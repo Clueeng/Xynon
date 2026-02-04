@@ -53,4 +53,17 @@ public class EventOverrideInput implements Event {
         a.setPressed(bPressed);
         b.setPressed(aPressed);
     }
+
+    private int dx = 0, dy = 0;
+    public void moveMouse(int dx, int dy) {
+        this.dx = dx;
+        this.dy = dy;
+    }
+
+    public int getDX() {
+        return dx;
+    }
+    public int getDY() {
+        return dy;
+    }
 }
